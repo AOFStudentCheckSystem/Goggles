@@ -6,7 +6,7 @@
           :accordion="true"
           class="side-menu"
           :class="{'hide-text': hideText}"
-          width="auto">
+          :width="hideText?'80px':'240px'">
         <Menu-item name="Dashboard">
             <Icon type="ios-speedometer-outline" :size="iconSize"></Icon>
             <span class="text"> Dashboard</span>
@@ -24,7 +24,7 @@
 
 <style scoped>
     .side-menu {
-        height: calc(100vh - 60px)
+        height: calc(100vh - 60px);
     }
     .hide-text .text {
         display: none;

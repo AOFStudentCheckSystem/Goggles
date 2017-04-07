@@ -1,19 +1,17 @@
 <template>
     <div>
         <navbar class="navbar"></navbar>
-        <Row type="flex">
-            <i-col :span="spanLeft">
-                <navmenu :hideText="spanLeft === 2"></navmenu>
-            </i-col>
-            <i-col :span="spanRight">
+        <div class="container">
+            <navmenu :hideText="hideText"></navmenu>
+            <div class="main-content">
                 <div class="header">
                     <i-button type="text" @click="toggleClick">
                         <Icon type="navicon" size="32"></Icon>
                     </i-button>
                 </div>
                 <router-view></router-view>
-            </i-col>
-        </Row>
+            </div>
+        </div>
     </div>
 </template>
 <style>
@@ -24,6 +22,14 @@
     .header{
         height: 4em;
         box-shadow: 0 1px 1px rgba(0,0,0,.1);
+    }
+    .container {
+        display: -webkit-flex;
+        display: flex;
+    }
+    .main-content {
+        -webkit-flex: 1;
+        flex: 1;
     }
 </style>
 <script>
@@ -43,18 +49,20 @@
         data () {
             return {
                 spanLeft: 5,
-                spanRight: 19
+                spanRight: 19,
+                hideText: false
             }
         },
         methods: {
             toggleClick () {
-                if (this.spanLeft === 5) {
-                    this.spanLeft = 2
-                    this.spanRight = 22
-                } else {
-                    this.spanLeft = 5
-                    this.spanRight = 19
-                }
+//                if (this.spanLeft === 5) {
+//                    this.spanLeft = 2
+//                    this.spanRight = 22
+//                } else {
+//                    this.spanLeft = 5
+//                    this.spanRight = 19
+//                }
+                this.hideText = !this.hideText
             }
         }
     }
