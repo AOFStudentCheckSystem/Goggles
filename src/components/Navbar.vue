@@ -1,8 +1,8 @@
 <template>
     <Menu mode="horizontal" theme="primary">
-        <Submenu name="user" class="submenu">
+        <Submenu name="user" class="submenu" v-if="loggedIn">
             <template slot="title">
-                用户
+                {{username}}
             </template>
             <Menu-item name="logOut">Log out</Menu-item>
             <Menu-item name="changePassword">Change password</Menu-item>
@@ -22,6 +22,14 @@
         name: 'Navbar',
         methods: {
             navbarSelect () {}
+        },
+        computed: {
+            loggedIn () {
+                return this.$store.state.user.authenticated
+            },
+            username () {
+                return this.$store.state.user.name
+            }
         }
     }
 </script>

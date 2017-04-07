@@ -9,7 +9,7 @@
 </style>
 
 <script>
-    import DashboardCard from '../Dashboard/DashboardCard.vue'
+    import DashboardCard from './DashboardCard.vue'
     export default {
         name: 'Dashboard',
         components: {

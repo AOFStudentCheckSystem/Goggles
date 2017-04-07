@@ -8,17 +8,37 @@
           :class="{'hide-text': hideText}"
           :width="hideText?'80px':'240px'">
         <Menu-item name="Dashboard">
-            <Icon type="ios-speedometer-outline" :size="iconSize"></Icon>
+            <Icon type="ios-speedometer" :size="iconSize"></Icon>
             <span class="text"> Dashboard</span>
         </Menu-item>
-        <Menu-item name="Event">
-            <Icon type="ios-flag-outline" :size="iconSize"></Icon>
-            <span class="text"> &nbsp;&nbsp;Event Management</span>
-        </Menu-item>
-        <Menu-item name="Week">
-            <Icon type="ios-calendar-outline" :size="iconSize"></Icon>
-            <span class="text"> &nbsp;Week Management</span>
-        </Menu-item>
+        <Submenu name="Event">
+            <template slot="title">
+                <Icon type="flag" :size="iconSize"></Icon>
+                <span class="text">Event Management</span>
+            </template>
+            <Menu-item name="EventModify">
+                <Icon type="edit" :size="18"></Icon>
+                <span class="text">Modify Events</span>
+            </Menu-item>
+            <Menu-item name="EventForm">
+                <Icon type="ios-paper" :size="18"></Icon>
+                <span class="text">Sign-up Forms</span>
+            </Menu-item>
+        </Submenu>
+        <Submenu name="Stats">
+            <template slot="title">
+                <Icon type="stats-bars" :size="iconSize"></Icon>
+                <span class="text">Statistics</span>
+            </template>
+            <Menu-item name="StatsEvent">
+                <Icon type="checkmark" :size="18"></Icon>
+                <span class="text">Events Stats</span>
+            </Menu-item>
+            <Menu-item name="StatsForm">
+                <Icon type="document-text" :size="18"></Icon>
+                <span class="text">Sign-up Forms Stats</span>
+            </Menu-item>
+        </Submenu>
     </Menu>
 </template>
 
@@ -36,11 +56,7 @@
         name: 'Navmenu',
         methods: {
             onSelect (key) {
-                console.log(key)
-                switch (key) {
-                    case 'Dashboard': this.$router.push({name: 'Dashboard'})
-                        break
-                }
+                this.$router.push({ name: key })
             }
         },
         props: {

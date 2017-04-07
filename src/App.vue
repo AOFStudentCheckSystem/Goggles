@@ -5,13 +5,19 @@
             <navmenu :hideText="hideText"></navmenu>
             <div class="main-content">
                 <div class="header">
-                    <i-button type="text" @click="toggleClick">
+                    <i-button type="text" @click="toggleClick" v-if="width >= 768">
                         <Icon type="navicon" size="32"></Icon>
                     </i-button>
                 </div>
                 <router-view></router-view>
             </div>
         </div>
+        <Modal
+            v-model="showModal"
+            :closable="false"
+            title="普通的Modal对话框标题">
+            1
+        </Modal>
     </div>
 </template>
 <style>
@@ -42,28 +48,34 @@
             Navmenu
         },
         computed: {
-            isLoggedIn () {
-                return this.$store.state.authentication.authenticated
+            loggedIn () {
+                return this.$store.state.user.authenticated
+            },
+            hideText () {
+                return this.width < 768 || this.hideTextOverride
             }
         },
         data () {
             return {
-                spanLeft: 5,
-                spanRight: 19,
-                hideText: false
+                hideTextOverride: false,
+                width: document.documentElement.clientWidth,
+                showModal: false
             }
         },
         methods: {
             toggleClick () {
-//                if (this.spanLeft === 5) {
-//                    this.spanLeft = 2
-//                    this.spanRight = 22
-//                } else {
-//                    this.spanLeft = 5
-//                    this.spanRight = 19
-//                }
-                this.hideText = !this.hideText
+                this.hideTextOverride = !this.hideTextOverride
+            },
+            changeWidth () {
+                this.width = document.documentElement.clientWidth
             }
+        },
+        mounted () {
+            window.addEventListener('resize', this.changeWidth)
+            this.showModal = !this.$store.state.user.authenticated
+        },
+        beforeDestroy () {
+            window.removeEventListener('resize', this.changeWidth)
         }
     }
 </script>
