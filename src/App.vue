@@ -5,26 +5,28 @@
             <navmenu :hideText="hideText"></navmenu>
             <div class="main-content">
                 <div class="header">
-                    <i-button type="text" @click="toggleClick" v-if="width >= 768">
+                    <Button type="text" @click="toggleClick" v-if="width >= 768">
                         <Icon type="navicon" size="32"></Icon>
-                    </i-button>
+                    </Button>
                 </div>
                 <router-view></router-view>
             </div>
         </div>
         <Modal
             v-model="showModal"
-            :closable="false">
-            <p slot="header" style="color:#f60;text-align:center">
-                <Icon type="information-circled"></Icon>
-                <span>删除确认</span>
+            :closable="false"
+            :mask-closable="false">
+            <p slot="header" class="align-center">
+                <Icon type="log-in"></Icon>
+                <span>Please Login</span>
             </p>
-            <div style="text-align:center">
-                <p>此任务删除后，下游 10 个任务将无法执行。</p>
-                <p>是否继续删除？</p>
+            <div class="align-center">
+                <login-panel @input="onFormInput"></login-panel>
             </div>
             <div slot="footer">
-                <Button type="error" size="large" long :loading="modal_loading" @click="del">删除</Button>
+                <Button type="text" class="float-left">Forgot your password?</Button>
+                <Button>Register</Button>
+                <Button type="primary">Login</Button>
             </div>
         </Modal>
     </div>
@@ -46,15 +48,23 @@
         -webkit-flex: 1;
         flex: 1;
     }
+    .align-center {
+        text-align:center
+    }
+    .float-left {
+        float: left;
+    }
 </style>
 <script>
     import Navbar from '@/components/Navbar.vue'
     import Navmenu from '@/components/Navmenu.vue'
+    import LoginPanel from '@/components/LoginPanel.vue'
     export default {
         name: 'app',
         components: {
             Navbar,
-            Navmenu
+            Navmenu,
+            LoginPanel
         },
         computed: {
             loggedIn () {
@@ -77,6 +87,9 @@
             },
             changeWidth () {
                 this.width = document.documentElement.clientWidth
+            },
+            onFormInput (form) {
+                console.log(form)
             }
         },
         mounted () {
