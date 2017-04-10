@@ -1,9 +1,11 @@
 <template>
-    <div>
-        <dashboard-card></dashboard-card>
-    </div>
+    <Row>
+        <dashboard-card>
+            <h1 slot="title">Placeholder</h1>
+            <p>Placeholder</p>
+        </dashboard-card>
+    </Row>
 </template>
-
 <style scoped>
 
 </style>

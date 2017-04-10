@@ -1,29 +1,22 @@
 <template>
-    <Card :style="{'width' : width + 'px'}">
-        <p slot="title">
-            <Icon type="ios-film-outline"></Icon>
-            经典电影
-        </p>
-        <a href="#" slot="extra" @click.prevent="changeLimit">
-            <Icon type="ios-loop-strong"></Icon>
-            换一换
-        </a>
-        <slot></slot>
-    </Card>
+    <Col :xs="24" :sm="24" :md="12" :lg="8">
+        <Card :style="{'width' : width + 'px'}" class="card">
+            <p slot="title">
+                <slot name="title"></slot>
+            </p>
+            <slot></slot>
+        </Card>
+    </Col>
 </template>
 
 <style scoped>
-
+    .card {
+        margin: 20px 20px 0 20px;
+    }
 </style>
 
 <script>
     export default {
-        name: 'DashboardCard',
-        props: {
-            width: {
-                type: Number,
-                default: 350
-            }
-        }
+        name: 'DashboardCard'
     }
 </script>

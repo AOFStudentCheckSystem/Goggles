@@ -22,6 +22,7 @@
             <Icon type="ios-person-outline" slot="prepend"></Icon>
             </Input>
         </Form-item>
+        <br>
         <Form-item prop="password">
             <Input type="password" v-model="form.password" placeholder="Password" class="input">
             <Icon type="ios-locked-outline" slot="prepend"></Icon>
