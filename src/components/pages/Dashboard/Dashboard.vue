@@ -1,9 +1,11 @@
 <template>
     <Row>
-        <dashboard-card>
-            <h1 slot="title">Placeholder</h1>
-            <p>Placeholder</p>
-        </dashboard-card>
+        <Col :xs="24" :sm="24" :md="12" :lg="8">
+            <dashboard-card>
+                <h1 slot="title">Placeholder</h1>
+                <p>Placeholder</p>
+            </dashboard-card>
+        </Col>
     </Row>
 </template>
 <style scoped>

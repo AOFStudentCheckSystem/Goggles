@@ -25,8 +25,8 @@
             </div>
             <div slot="footer">
                 <Button type="text" class="float-left">Forgot your password?</Button>
-                <Button>Register</Button>
-                <Button type="primary">Login</Button>
+                <Button :disabled="true">Register</Button>
+                <Button type="primary" @click="login">Login</Button>
             </div>
         </Modal>
     </div>
@@ -78,7 +78,11 @@
             return {
                 hideTextOverride: false,
                 width: document.documentElement.clientWidth,
-                showModal: false
+                showModal: false,
+                form: {
+                    user: '',
+                    password: ''
+                }
             }
         },
         methods: {
@@ -89,12 +93,39 @@
                 this.width = document.documentElement.clientWidth
             },
             onFormInput (form) {
-                console.log(form)
+                this.form = form
+            },
+            login () {
+                let f = this.form
+                if (f.user.length < 1 || f.password.length < 8) {
+                    this.$Message.warning('Please make sure your input is valid!')
+                } else {
+                    const self = this
+                    this.$store.dispatch('authenticate', {
+                        username: this.user,
+                        password: this.password,
+                        callback (ret) {
+                            console.error(ret)
+                            self.$Message.error('Login failed, please check your input!')
+                        }
+                    })
+                }
             }
         },
         mounted () {
             window.addEventListener('resize', this.changeWidth)
-            this.showModal = !this.$store.state.user.authenticated
+            let auth = localStorage.getItem('Authorization')
+            if (auth) {
+                this.axios.defaults.headers.common['Authorization'] = auth
+                const self = this
+                this.$store.dispatch('verifyToken', {
+                    callback (ret) {
+                        self.showModal = !self.$store.state.user.authenticated
+                    }
+                })
+            } else {
+                this.showModal = true
+            }
         },
         beforeDestroy () {
             window.removeEventListener('resize', this.changeWidth)

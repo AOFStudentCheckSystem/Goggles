@@ -1,12 +1,10 @@
 <template>
-    <Col :xs="24" :sm="24" :md="12" :lg="8">
-        <Card :style="{'width' : width + 'px'}" class="card">
-            <p slot="title">
-                <slot name="title"></slot>
-            </p>
-            <slot></slot>
-        </Card>
-    </Col>
+    <Card class="card">
+        <p slot="title">
+            <slot name="title"></slot>
+        </p>
+        <slot></slot>
+    </Card>
 </template>
 
 <style scoped>

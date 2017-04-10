@@ -2,60 +2,87 @@
  * Created by liupeiqi on 2017/4/7.
  */
 import * as types from '../mutation-types'
+import Vue from 'vue'
 
 const state = {
-    token: '',
     authenticated: false,
     error: false,
-    phone: null,
-    name: '',
     email: null,
     id: null,
-    mfa: null,
-    loginHistory: []
+    level: null,
+    student: null
 }
 
 const mutations = {
-    [types.USER] (state, {token, mfa = false}) {
-        state.token = token
-        state.authenticated = true
-        state.mfa = mfa
+    [types.USER] (state, {email, user}) {
+        state.email = email
+        state.id = user.userId
+        state.level = user.userLevel
+        state.student = user.student
     },
-    [types.USER_FAILURE] (state) {
+    [types.USER_FAILURE] (state, {error}) {
+        state.email = null
+        state.id = null
+        state.level = null
+        state.student = null
+        state.error = error
+        localStorage.removeItem('Authorization')
         state.authenticated = false
+    },
+    [types.USER_VERIFIED] (state) {
+        state.authenticated = true
     },
     [types.USER_ERROR] (state, {error}) {
         state.error = error
-    },
-    [types.USER_PHONE_CHANGE] (state, {phone}) {
-        state.phone = phone
-    },
-    [types.USER_NAME_CHANGE] (state, {name}) {
-        state.name = name
     },
     [types.USER_EMAIL_CHANGE] (state, {email}) {
         state.email = email
     },
     [types.USER_ID_CHANGE] (state, {id}) {
         state.id = id
-    },
-    [types.USER_MFA_STATUS_CHANGE] (state, {newStatus}) {
-        state.mfa = newStatus
-    },
-    [types.USER_LOGIN_HISTORY_CHANGE] (state, {newHistory}) {
-        if (state.loginHistory.length > 0) {
-            state.loginHistory.splice(0, state.loginHistory.length)
-        }
-        newHistory.forEach((item) => {
-            state.loginHistory.push(item)
-        })
     }
 }
 
 const actions = {
-    authenticate: ({commit, dispatch}, {username, password, callback}) => {
+    authenticate: ({commit}, {username, password, callback}) => {
+        Vue.axios.post('/auth/login', {
+            email: username,
+            password: password
+        }).then((resp) => {
+            commit(types.USER, resp)
+            localStorage.setItem('Authorization', resp.tokenSecret)
+            Vue.axios.defaults.headers.common['Authorization'] = resp.tokenSecret
+            commit(types.USER_VERIFIED)
+            callback({
+                success: true
+            })
+        }).catch((err) => {
+            commit(types.USER_FAILURE, {err})
+            callback({
+                success: false,
+                cause: err
+            })
+        })
     },
-    verifyToken: ({state, commit, dispatch}, {callback}) => {
+    verifyToken: ({state, commit}, {callback}) => {
+        Vue.axios.get('/auth/verify')
+            .then((resp) => {
+                if (!state.authenticated) {
+                    commit(types.USER, resp)
+                    Vue.axios.defaults.headers.common['Authorization'] = resp.tokenSecret
+                    commit(types.USER_VERIFIED)
+                }
+                callback({
+                    success: true
+                })
+            })
+            .catch((err) => {
+                commit(types.USER_FAILURE, {err})
+                callback({
+                    success: false,
+                    cause: err
+                })
+            })
     },
     signOut: ({commit}) => {
     },
