@@ -2,7 +2,8 @@
  * Created by liupeiqi on 2017/4/7.
  */
 import * as types from '../mutation-types'
-import Vue from 'vue'
+// import Vue from 'vue'
+import {axia} from '../../main'
 
 const state = {
     authenticated: false,
@@ -45,13 +46,13 @@ const mutations = {
 
 const actions = {
     authenticate: ({commit}, {username, password, callback}) => {
-        Vue.axios.post('/auth/login', {
+        axia.post('/auth/login', {
             email: username,
             password: password
         }).then((resp) => {
             commit(types.USER, resp)
             localStorage.setItem('Authorization', resp.tokenSecret)
-            Vue.axios.defaults.headers.common['Authorization'] = resp.tokenSecret
+            axia.defaults.headers.common['Authorization'] = resp.tokenSecret
             commit(types.USER_VERIFIED)
             callback({
                 success: true
@@ -65,11 +66,11 @@ const actions = {
         })
     },
     verifyToken: ({state, commit}, {callback}) => {
-        Vue.axios.get('/auth/verify')
+        axia.get('/auth/verify')
             .then((resp) => {
                 if (!state.authenticated) {
                     commit(types.USER, resp)
-                    Vue.axios.defaults.headers.common['Authorization'] = resp.tokenSecret
+                    axia.defaults.headers.common['Authorization'] = resp.tokenSecret
                     commit(types.USER_VERIFIED)
                 }
                 callback({
