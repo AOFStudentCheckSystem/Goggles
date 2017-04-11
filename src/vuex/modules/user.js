@@ -9,21 +9,18 @@ const state = {
     authenticated: false,
     error: false,
     email: null,
-    id: null,
     level: null,
     student: null
 }
 
 const mutations = {
-    [types.USER] (state, {email, user}) {
-        state.email = email
-        state.id = user.userId
+    [types.USER] (state, user) {
+        state.email = user.email
         state.level = user.userLevel
         state.student = user.student
     },
     [types.USER_FAILURE] (state, {error}) {
         state.email = null
-        state.id = null
         state.level = null
         state.student = null
         state.error = error
@@ -38,21 +35,18 @@ const mutations = {
     },
     [types.USER_EMAIL_CHANGE] (state, {email}) {
         state.email = email
-    },
-    [types.USER_ID_CHANGE] (state, {id}) {
-        state.id = id
     }
 }
 
 const actions = {
     authenticate: ({commit}, {username, password, callback}) => {
-        axia.post('/auth/login', {
-            email: username,
-            password: password
-        }).then((resp) => {
-            commit(types.USER, resp)
-            localStorage.setItem('Authorization', resp.tokenSecret)
-            axia.defaults.headers.common['Authorization'] = resp.tokenSecret
+        const form = new FormData()
+        form.append('email', username)
+        form.append('password', password)
+        axia.post('/auth/login', form).then((resp) => {
+            commit(types.USER, resp.data.user)
+            localStorage.setItem('Authorization', resp.data.token)
+            axia.defaults.headers.common['Authorization'] = resp.data.token
             commit(types.USER_VERIFIED)
             callback({
                 success: true
@@ -69,8 +63,8 @@ const actions = {
         axia.get('/auth/verify')
             .then((resp) => {
                 if (!state.authenticated) {
-                    commit(types.USER, resp)
-                    axia.defaults.headers.common['Authorization'] = resp.tokenSecret
+                    commit(types.USER, resp.data.user)
+                    axia.defaults.headers.common['Authorization'] = resp.data.token
                     commit(types.USER_VERIFIED)
                 }
                 callback({

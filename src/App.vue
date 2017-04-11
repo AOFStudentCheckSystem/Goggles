@@ -29,6 +29,10 @@
                 <Button type="primary" @click="login">Login</Button>
             </div>
         </Modal>
+        <Spin fix v-if="loading">
+            <Icon type="load-c" size=36 class="spin-icon-load"></Icon>
+            <div>Loading</div>
+        </Spin>
     </div>
 </template>
 <style>
@@ -54,11 +58,21 @@
     .float-left {
         float: left;
     }
+
+    .spin-icon-load{
+        animation: ani-spin 1s linear infinite;
+    }
+    @keyframes ani-spin {
+        from { transform: rotate(0deg);}
+        50%  { transform: rotate(180deg);}
+        to   { transform: rotate(360deg);}
+    }
 </style>
 <script>
     import Navbar from '@/components/Navbar.vue'
     import Navmenu from '@/components/Navmenu.vue'
     import LoginPanel from '@/components/LoginPanel.vue'
+    import {axia} from './main'
     export default {
         name: 'app',
         components: {
@@ -82,7 +96,8 @@
                 form: {
                     user: '',
                     password: ''
-                }
+                },
+                loading: true
             }
         },
         methods: {
@@ -102,11 +117,14 @@
                 } else {
                     const self = this
                     this.$store.dispatch('authenticate', {
-                        username: this.user,
-                        password: this.password,
+                        username: f.user,
+                        password: f.password,
                         callback (ret) {
-                            console.error(ret)
-                            self.$Message.error('Login failed, please check your input!')
+                            if (ret.success) {
+                                self.showModal = false
+                            } else {
+                                self.$Message.error('Login failed, please check your input!')
+                            }
                         }
                     })
                 }
@@ -116,14 +134,17 @@
             window.addEventListener('resize', this.changeWidth)
             let auth = localStorage.getItem('Authorization')
             if (auth) {
-                this.axios.defaults.headers.common['Authorization'] = auth
+                axia.defaults.headers.common['Authorization'] = auth
+                console.log(axia.defaults.headers.common['Authorization'])
                 const self = this
                 this.$store.dispatch('verifyToken', {
                     callback (ret) {
+                        self.loading = false
                         self.showModal = !self.$store.state.user.authenticated
                     }
                 })
             } else {
+                this.loading = false
                 this.showModal = true
             }
         },

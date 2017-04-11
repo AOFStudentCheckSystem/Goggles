@@ -28,7 +28,7 @@
                 return this.$store.state.user.authenticated
             },
             username () {
-                return this.$store.state.user.name
+                return this.$store.state.user.email
             }
         }
     }

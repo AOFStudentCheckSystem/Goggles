@@ -11,10 +11,7 @@ Vue.use(iView)
 import axios from 'axios'
 
 export const axia = axios.create({
-    baseURL: `https://check.guardiantech.com.cn`,
-    headers: {
-        Authorization: ''
-    }
+    baseURL: `https://check.guardiantech.com.cn`
 })
 
 /* eslint-disable no-new */
