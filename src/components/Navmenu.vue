@@ -11,34 +11,18 @@
             <Icon type="ios-speedometer" :size="iconSize"></Icon>
             <span class="text"> Dashboard</span>
         </Menu-item>
-        <Submenu name="Event">
-            <template slot="title">
-                <Icon type="flag" :size="iconSize"></Icon>
-                <span class="text">Event Management</span>
-            </template>
-            <Menu-item name="EventModify">
-                <Icon type="edit" :size="18"></Icon>
-                <span class="text">Modify Events</span>
-            </Menu-item>
-            <Menu-item name="EventForm">
-                <Icon type="ios-paper" :size="18"></Icon>
-                <span class="text">Sign-up Forms</span>
-            </Menu-item>
-        </Submenu>
-        <Submenu name="Stats">
-            <template slot="title">
-                <Icon type="stats-bars" :size="iconSize"></Icon>
-                <span class="text">Statistics</span>
-            </template>
-            <Menu-item name="StatsEvent">
-                <Icon type="checkmark" :size="18"></Icon>
-                <span class="text">Events Stats</span>
-            </Menu-item>
-            <Menu-item name="StatsForm">
-                <Icon type="document-text" :size="18"></Icon>
-                <span class="text">Sign-up Forms Stats</span>
-            </Menu-item>
-        </Submenu>
+        <Menu-item name="Event">
+            <Icon type="chatbox" :size="iconSize"></Icon>
+            <span class="text">Events</span>
+        </Menu-item>
+        <Menu-item name="EventGroup">
+            <Icon type="chatboxes" :size="iconSize"></Icon>
+            <span class="text">Event Groups</span>
+        </Menu-item>
+        <Menu-item name="Sheet">
+            <Icon type="ios-calendar" :size="iconSize"></Icon>
+            <span class="text">Sign-up Sheets</span>
+        </Menu-item>
     </Menu>
 </template>
 

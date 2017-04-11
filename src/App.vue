@@ -29,10 +29,7 @@
                 <Button type="primary" @click="login">Login</Button>
             </div>
         </Modal>
-        <Spin fix v-if="loading">
-            <Icon type="load-c" size=36 class="spin-icon-load"></Icon>
-            <div>Loading</div>
-        </Spin>
+        <spinner fix v-if="loading"></spinner>
     </div>
 </template>
 <style>
@@ -58,27 +55,20 @@
     .float-left {
         float: left;
     }
-
-    .spin-icon-load{
-        animation: ani-spin 1s linear infinite;
-    }
-    @keyframes ani-spin {
-        from { transform: rotate(0deg);}
-        50%  { transform: rotate(180deg);}
-        to   { transform: rotate(360deg);}
-    }
 </style>
 <script>
     import Navbar from '@/components/Navbar.vue'
     import Navmenu from '@/components/Navmenu.vue'
     import LoginPanel from '@/components/LoginPanel.vue'
     import {axia} from './main'
+    import Spinner from '@/components/Spinner.vue'
     export default {
         name: 'app',
         components: {
             Navbar,
             Navmenu,
-            LoginPanel
+            LoginPanel,
+            Spinner
         },
         computed: {
             loggedIn () {
@@ -122,6 +112,7 @@
                         callback (ret) {
                             if (ret.success) {
                                 self.showModal = false
+                                self.loading = false
                             } else {
                                 self.$Message.error('Login failed, please check your input!')
                             }
@@ -135,18 +126,16 @@
             let auth = localStorage.getItem('Authorization')
             if (auth) {
                 axia.defaults.headers.common['Authorization'] = auth
-                console.log(axia.defaults.headers.common['Authorization'])
                 const self = this
                 this.$store.dispatch('verifyToken', {
                     callback (ret) {
-                        self.loading = false
                         self.showModal = !self.$store.state.user.authenticated
                     }
                 })
             } else {
-                this.loading = false
                 this.showModal = true
             }
+            this.loading = this.showModal
         },
         beforeDestroy () {
             window.removeEventListener('resize', this.changeWidth)
