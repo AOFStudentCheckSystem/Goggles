@@ -9,10 +9,14 @@ import {store} from './vuex/store'
 Vue.config.productionTip = false
 Vue.use(iView)
 import axios from 'axios'
-
+import 'vue-resize/dist/vue-resize.css'
+import VueResize from 'vue-resize/dist/vue-resize'
+Vue.use(VueResize)
 export const axia = axios.create({
     baseURL: `https://check.guardiantech.com.cn`
 })
+
+export const EventBus = new Vue()
 
 /* eslint-disable no-new */
 new Vue({

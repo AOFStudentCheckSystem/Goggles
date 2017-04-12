@@ -1,11 +1,12 @@
 <template>
-    <div>
+    <div refs="eventView">
+        <resize-watcher @resize="magic" listenWindow listenDOM></resize-watcher>
         <spinner v-if="loading"></spinner>
         <Table
             :columns="columns"
             :data="events"
             v-else
-            :width="width - ((width > 768)?240:80) - 60"
+            :width="width - 60"
             style="margin: 30px"
             size="small"></Table>
     </div>
@@ -16,18 +17,25 @@
 <script>
     import Spinner from '../../Spinner'
     import moment from 'moment'
+    import ResizeWatcher from '@/components/ResizeWatcher.vue'
+    import {EventBus} from '../../../main'
     export default {
-        components: {Spinner},
+        components: {
+            Spinner,
+            ResizeWatcher
+        },
         name: 'Event',
         data () {
             return {
                 width: document.documentElement.clientWidth,
+                sidenav: 0,
                 loading: true,
                 columns: [
                     {
                         title: 'ID',
                         key: 'id',
                         width: 50
+//                        fixed: 'left'
                     },
                     {
                         title: 'Name',
@@ -46,6 +54,16 @@
                         title: 'Status',
                         key: 'eventStatus',
                         width: 80
+                    },
+                    {
+                        title: 'Operations',
+                        key: 'action',
+//                        fixed: 'right',
+                        width: 150,
+                        render () {
+                            return `<i-button type="text" size="small">查看</i-button>
+                                    <i-button type="text" size="small">编辑</i-button>`
+                        }
                     }
                 ]
             }
@@ -82,22 +100,25 @@
                     callback (ret) {
                         if (ret.success) {
                             self.loading = false
+                            EventBus.$emit('require-sidenav')
                         } else {
                             this.$Message.error('An error has occurred, try reload this page.')
                         }
                     }
                 })
             },
-            changeWidth () {
-                this.width = document.documentElement.clientWidth
+            magic () {
+                this.width = document.documentElement.clientWidth - this.sidenav
             }
         },
         mounted () {
-            window.addEventListener('resize', this.changeWidth)
+            const self = this
+            EventBus.$on('sidenav-resize', (size) => {
+//                console.log('receive sidenav-resize:' + size)
+                self.sidenav = size
+                self.magic()
+            })
             this.updateList()
-        },
-        beforeDestroy () {
-            window.removeEventListener('resize', this.changeWidth)
         }
     }
 </script>

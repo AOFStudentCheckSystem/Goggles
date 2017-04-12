@@ -1,5 +1,6 @@
 <template>
     <div>
+        <resize-watcher @resize="changeWidth" listenWindow></resize-watcher>
         <navbar class="navbar" @signOut="init"></navbar>
         <div class="container">
             <navmenu :hideText="hideText" class="nav-menu-width"></navmenu>
@@ -43,7 +44,7 @@
     }
     .container {
         display: -webkit-flex;
-        display: flex;
+        display: flex
     }
     .main-content {
         -webkit-flex: 1;
@@ -66,13 +67,15 @@
     import LoginPanel from '@/components/LoginPanel.vue'
     import {axia} from './main'
     import Spinner from '@/components/Spinner.vue'
+    import ResizeWatcher from '@/components/ResizeWatcher.vue'
     export default {
         name: 'app',
         components: {
             Navbar,
             Navmenu,
             LoginPanel,
-            Spinner
+            Spinner,
+            ResizeWatcher
         },
         computed: {
             loggedIn () {
@@ -142,11 +145,7 @@
             }
         },
         mounted () {
-            window.addEventListener('resize', this.changeWidth)
             this.init()
-        },
-        beforeDestroy () {
-            window.removeEventListener('resize', this.changeWidth)
         }
     }
 </script>
