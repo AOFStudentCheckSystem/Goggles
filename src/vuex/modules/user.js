@@ -2,8 +2,7 @@
  * Created by liupeiqi on 2017/4/7.
  */
 import * as types from '../mutation-types'
-// import Vue from 'vue'
-import {axia} from '../../main'
+import { axia } from '../../main'
 
 const state = {
     authenticated: false,
@@ -19,7 +18,7 @@ const mutations = {
         state.level = user.userLevel
         state.student = user.student
     },
-    [types.USER_FAILURE] (state, {error}) {
+    [types.USER_FAILURE] (state, error = false) {
         state.email = null
         state.level = null
         state.student = null
@@ -52,7 +51,7 @@ const actions = {
                 success: true
             })
         }).catch((err) => {
-            commit(types.USER_FAILURE, {err})
+            commit(types.USER_FAILURE, err)
             callback({
                 success: false,
                 cause: err
@@ -72,14 +71,28 @@ const actions = {
                 })
             })
             .catch((err) => {
-                commit(types.USER_FAILURE, {err})
+                commit(types.USER_FAILURE, err)
                 callback({
                     success: false,
                     cause: err
                 })
             })
     },
-    signOut: ({commit}) => {
+    signOut: ({commit}, {callback}) => {
+        axia.get('/auth/logout')
+            .then((resp) => {
+                commit(types.USER_FAILURE)
+                callback({
+                    success: true
+                })
+            })
+            .catch((err) => {
+                commit(types.USER_FAILURE)
+                callback({
+                    success: false,
+                    cause: err
+                })
+            })
     },
     setError ({commit}, payload) {
     }

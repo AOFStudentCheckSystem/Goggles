@@ -1,11 +1,11 @@
 <template>
     <div>
-        <navbar class="navbar"></navbar>
+        <navbar class="navbar" @signOut="init"></navbar>
         <div class="container">
-            <navmenu :hideText="hideText"></navmenu>
+            <navmenu :hideText="hideText" class="nav-menu-width"></navmenu>
             <div class="main-content">
                 <div class="header">
-                    <Button type="text" @click="toggleClick" v-if="width >= 768">
+                    <Button type="text" @click="toggleClick" v-if="width > 768">
                         <Icon type="navicon" size="32"></Icon>
                     </Button>
                 </div>
@@ -55,6 +55,10 @@
     .float-left {
         float: left;
     }
+    .nav-menu-width {
+        flex-grow: 0;
+        flex-shrink: 0;
+    }
 </style>
 <script>
     import Navbar from '@/components/Navbar.vue'
@@ -75,7 +79,7 @@
                 return this.$store.state.user.authenticated
             },
             hideText () {
-                return this.width < 768 || this.hideTextOverride
+                return this.width <= 768 || this.hideTextOverride
             }
         },
         data () {
@@ -119,23 +123,27 @@
                         }
                     })
                 }
+            },
+            init () {
+                const auth = localStorage.getItem('Authorization')
+                if (auth) {
+                    console.log(auth)
+                    axia.defaults.headers.common['Authorization'] = auth
+                    const self = this
+                    this.$store.dispatch('verifyToken', {
+                        callback (ret) {
+                            self.showModal = !self.$store.state.user.authenticated
+                        }
+                    })
+                } else {
+                    this.showModal = true
+                }
+                this.loading = this.showModal
             }
         },
         mounted () {
             window.addEventListener('resize', this.changeWidth)
-            let auth = localStorage.getItem('Authorization')
-            if (auth) {
-                axia.defaults.headers.common['Authorization'] = auth
-                const self = this
-                this.$store.dispatch('verifyToken', {
-                    callback (ret) {
-                        self.showModal = !self.$store.state.user.authenticated
-                    }
-                })
-            } else {
-                this.showModal = true
-            }
-            this.loading = this.showModal
+            this.init()
         },
         beforeDestroy () {
             window.removeEventListener('resize', this.changeWidth)

@@ -1,8 +1,9 @@
 <template>
-    <Menu mode="horizontal" theme="primary">
+    <Menu mode="horizontal" theme="primary" @on-select="navbarSelect">
         <Submenu name="user" class="submenu" v-if="loggedIn">
             <template slot="title">
                 {{username}}
+
             </template>
             <Menu-item name="logOut">Log out</Menu-item>
             <Menu-item name="changePassword">Change password</Menu-item>
@@ -21,7 +22,25 @@
     export default {
         name: 'Navbar',
         methods: {
-            navbarSelect () {}
+            navbarSelect (key) {
+                switch (key) {
+                    case 'user':
+                        break
+                    case 'logOut':
+                        this.logOut()
+                        break
+                    default:
+                        this.$Message.info('Feature not implemented')
+                }
+            },
+            logOut () {
+                const self = this
+                this.$store.dispatch('signOut', {
+                    callback (ret) {
+                        self.$emit('signOut')
+                    }
+                })
+            }
         },
         computed: {
             loggedIn () {
