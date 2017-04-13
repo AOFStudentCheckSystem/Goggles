@@ -2,9 +2,6 @@
 * Created by dummy on 4/4/17.
 */
 
-
-
-
 <style scoped>
     .input {
         min-width: 300px;
@@ -32,6 +29,7 @@
 </template>
 
 <script>
+    import {EventBus} from '../main'
     export default {
         data () {
             return {
@@ -62,6 +60,15 @@
                 },
                 deep: true
             }
+        },
+        mounted () {
+            const self = this
+            EventBus.$on('login-reset', () => {
+                self.form = {
+                    user: '',
+                    password: ''
+                }
+            })
         }
     }
 </script>

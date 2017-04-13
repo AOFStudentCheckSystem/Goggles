@@ -5,6 +5,7 @@
 import * as types from '../mutation-types'
 import Vue from 'vue'
 import { axia } from '../../main'
+import moment from 'moment'
 
 const state = {
     events: [],
@@ -31,7 +32,8 @@ const actions = {
         axia.get('/event/list', {
             params: {
                 size: state.size,
-                page: page
+                page: page,
+                sort: 'eventTime,desc'
             }
         })
             .then((resp) => {
@@ -42,6 +44,29 @@ const actions = {
                 })
             })
             .catch((err) => {
+                callback({
+                    success: false,
+                    cause: err
+                })
+            })
+    },
+    addEvent (store, {form, callback}) {
+        const formData = new FormData()
+        formData.append('name', form.name)
+        if (form.time) {
+            formData.append('time', moment(form.time).format('x'))
+        }
+        if (form.descriptions) {
+            formData.append('descriptions', form.descriptions)
+        }
+        axia.post('/event/create', formData)
+            .then((resp) => {
+                let retObj = {success: resp.data.success}
+                if (!resp.data.success) {
+                    retObj.cause = resp.data.error
+                }
+                callback(retObj)
+            }).catch((err) => {
                 callback({
                     success: false,
                     cause: err

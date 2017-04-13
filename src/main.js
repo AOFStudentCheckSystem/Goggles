@@ -7,7 +7,8 @@ import iView from 'iview'
 import 'iview/dist/styles/iview.css'
 import {store} from './vuex/store'
 Vue.config.productionTip = false
-Vue.use(iView)
+import locale from 'iview/src/locale/lang/en-US'
+Vue.use(iView, {locale})
 import axios from 'axios'
 import 'vue-resize/dist/vue-resize.css'
 import VueResize from 'vue-resize/dist/vue-resize'

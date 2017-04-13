@@ -65,7 +65,7 @@
     import Navbar from '@/components/Navbar.vue'
     import Navmenu from '@/components/Navmenu.vue'
     import LoginPanel from '@/components/LoginPanel.vue'
-    import {axia} from './main'
+    import {axia, EventBus} from './main'
     import Spinner from '@/components/Spinner.vue'
     import ResizeWatcher from '@/components/ResizeWatcher.vue'
     export default {
@@ -120,6 +120,7 @@
                             if (ret.success) {
                                 self.showModal = false
                                 self.loading = false
+                                EventBus.$emit('login-reset')
                             } else {
                                 self.$Message.error('Login failed, please check your input!')
                             }

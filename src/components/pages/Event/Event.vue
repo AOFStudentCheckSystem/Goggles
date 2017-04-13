@@ -2,27 +2,53 @@
     <div refs="eventView">
         <resize-watcher @resize="magic" listenWindow listenDOM></resize-watcher>
         <spinner v-if="loading"></spinner>
-        <Table
-            :columns="columns"
-            :data="events"
-            v-else
-            :width="width - 60"
-            style="margin: 30px"
-            size="small"></Table>
+        <div v-else>
+            <i-button type="text" size="small" @click="add"><Icon type="plus" :size="24" style="margin: 15px 30px 15px 30px"></Icon></i-button>
+            <Table
+                :columns="columns"
+                :data="events"
+                :width="width - 60"
+                style="margin: 0 30px 30px 30px"
+                size="small"></Table>
+            <div class="container">
+                <Page :total="totalPages" :page-size="1" :current="page + 1" @on-change="changePage"></Page>
+            </div>
+        </div>
+        <Modal v-model="showModal" :mask-closable="false" @on-cancel="cancel">
+            <p slot="header" class="text-center">{{mode}} Event</p>
+            <event-add v-if="mode === 'Add'"></event-add>
+            <event-edit v-if="mode === 'Edit'"></event-edit>
+            <div slot="footer" class="text-center">Created by Yaotian Feng, Yuanchu Xie, and Peiqi Liu</div>
+        </Modal>
     </div>
 </template>
 
 <style scoped>
+    .container {
+        display: -webkit-flex;
+        display:         flex;
+        -webkit-align-items: center;
+        align-items: center;
+        -webkit-justify-content: center;
+        justify-content: center;
+    }
+    .text-center {
+        text-align:center
+    }
 </style>
 <script>
     import Spinner from '../../Spinner'
     import moment from 'moment'
     import ResizeWatcher from '@/components/ResizeWatcher.vue'
     import {EventBus} from '../../../main'
+    import EventEdit from './EventEdit.vue'
+    import EventAdd from './EventAdd.vue'
     export default {
         components: {
             Spinner,
-            ResizeWatcher
+            ResizeWatcher,
+            EventEdit,
+            EventAdd
         },
         name: 'Event',
         data () {
@@ -30,6 +56,8 @@
                 width: document.documentElement.clientWidth,
                 sidenav: 0,
                 loading: true,
+                showModal: false,
+                mode: false,
                 columns: [
                     {
                         title: 'ID',
@@ -53,19 +81,26 @@
                     {
                         title: 'Status',
                         key: 'eventStatus',
-                        width: 80
+                        width: 100
                     },
                     {
-                        title: 'Operations',
+                        title: 'Actions',
                         key: 'action',
-//                        fixed: 'right',
-                        width: 150,
-                        render () {
-                            return `<i-button type="text" size="small">查看</i-button>
-                                    <i-button type="text" size="small">编辑</i-button>`
+                        fixed: 'right',
+                        width: 100,
+                        render (row, column, index) {
+                            return `<i-button type="text" size="small" @click="edit(${index})">
+                                        <Icon type="edit" :size="16"></Icon></i-button>
+                                    <i-button type="text" size="small" @click="remove(${index})">
+                                        <Icon type="trash-a" :size="16"></Icon></i-button>`
                         }
                     }
                 ]
+            }
+        },
+        watch: {
+            mode (newV, oldV) {
+                this.showModal = !!newV
             }
         },
         computed: {
@@ -93,22 +128,41 @@
             }
         },
         methods: {
-            updateList () {
+            updateList (first = false) {
                 const self = this
+                this.loading = true
                 this.$store.dispatch('fetchEvents', {
                     page: self.page,
                     callback (ret) {
                         if (ret.success) {
                             self.loading = false
-                            EventBus.$emit('require-sidenav')
+                            if (first) {
+                                EventBus.$emit('require-sidenav')
+                            }
                         } else {
-                            this.$Message.error('An error has occurred, try reload this page.')
+                            self.$Message.error('An error has occurred, try reload this page.')
                         }
                     }
                 })
             },
             magic () {
                 this.width = document.documentElement.clientWidth - this.sidenav
+                this.$forceUpdate()
+            },
+            changePage (newPage) {
+//                console.log(newPage)
+                this.$store.commit('EVENTS_PAGE', newPage - 1)
+                this.updateList()
+            },
+            edit (index) {
+                this.mode = 'Edit'
+            },
+            remove (index) {},
+            cancel () {
+                this.mode = false
+            },
+            add () {
+                this.mode = 'Add'
             }
         },
         mounted () {
@@ -118,7 +172,11 @@
                 self.sidenav = size
                 self.magic()
             })
-            this.updateList()
+            EventBus.$on('form-submit', () => {
+                self.cancel()
+                self.updateList()
+            })
+            this.updateList(true)
         }
     }
 </script>
