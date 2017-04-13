@@ -17,7 +17,7 @@
         <Modal v-model="showModal" :mask-closable="false" @on-cancel="cancel">
             <p slot="header" class="text-center">{{mode}} Event</p>
             <event-add v-if="mode === 'Add'"></event-add>
-            <event-edit v-if="mode === 'Edit'"></event-edit>
+            <event-edit v-if="mode === 'Edit'" v-model="editing"></event-edit>
             <div slot="footer" class="text-center">Created by Yaotian Feng, Yuanchu Xie, and Peiqi Liu</div>
         </Modal>
     </div>
@@ -43,6 +43,7 @@
     import {EventBus} from '../../../main'
     import EventEdit from './EventEdit.vue'
     import EventAdd from './EventAdd.vue'
+    import copy from '@/copy'
     export default {
         components: {
             Spinner,
@@ -58,6 +59,7 @@
                 loading: true,
                 showModal: false,
                 mode: false,
+                editing: null,
                 columns: [
                     {
                         title: 'ID',
@@ -76,7 +78,7 @@
                     {
                         title: 'Time',
                         key: 'eventTime',
-                        width: 150
+                        width: 180
                     },
                     {
                         title: 'Status',
@@ -112,8 +114,8 @@
             },
             events () {
                 return this.$store.state.event.events.map((event) => {
-                    let newEvent = JSON.parse(JSON.stringify(event))
-                    newEvent.eventTime = moment(newEvent.eventTime).local().format('YYYY-MM-DD hh:mm')
+                    let newEvent = copy(event)
+                    newEvent.eventTime = moment(newEvent.eventTime).format('YYYY-MM-DD ddd HH:mm')
                     switch (newEvent.eventStatus) {
                         case -1: newEvent.eventStatus = 'Past'
                             break
@@ -147,7 +149,6 @@
             },
             magic () {
                 this.width = document.documentElement.clientWidth - this.sidenav
-                this.$forceUpdate()
             },
             changePage (newPage) {
 //                console.log(newPage)
@@ -155,11 +156,28 @@
                 this.updateList()
             },
             edit (index) {
+                this.editing = copy(this.$store.state.event.events[index])
+                this.editing.eventTime = moment(this.editing.eventTime).toDate()
                 this.mode = 'Edit'
             },
-            remove (index) {},
+            remove (index) {
+                const self = this
+                this.$store.dispatch('removeEvent', {
+                    id: this.events[index].eventId,
+                    callback (ret) {
+                        if (ret.success) {
+                            self.$Message.success('Event removed!')
+                        } else {
+                            self.$Message.error('An error has occurred!')
+                            console.error(ret.cause)
+                        }
+                        self.updateList()
+                    }
+                })
+            },
             cancel () {
                 this.mode = false
+                this.editing = null
             },
             add () {
                 this.mode = 'Add'

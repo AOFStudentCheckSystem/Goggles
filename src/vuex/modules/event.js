@@ -73,8 +73,52 @@ const actions = {
                 })
             })
     },
+    editEvent ({state}, {form, callback}) {
+        const formData = new FormData()
+        const ref = state.events.filter(ev => { return ev.eventId === form.eventId })[0]
+        formData.append('eventId', form.eventId)
+        let time = Number(moment(form.eventTime).format('x'))
+        if (time !== ref.eventTime) {
+            formData.append('newTime', time)
+        }
+        if (form.eventDescription !== ref.eventDescription) {
+            formData.append('newDescription', form.eventDescription)
+        }
+        if (form.eventStatus !== ref.eventStatus) {
+            formData.append('newStatus', form.eventStatus)
+        }
+        if (formData.has('newTime') || formData.has('newDescription') || formData.has('newStatus')) {
+            axia.post('/event/edit', formData)
+                .then((resp) => {
+                    let retObj = {success: resp.data.success}
+                    if (!resp.data.success) {
+                        retObj.cause = resp.data.error
+                    }
+                    callback(retObj)
+                }).catch((err) => {
+                    callback({
+                        success: false,
+                        cause: err
+                    })
+                })
+        } else {
+            callback({success: true})
+        }
+    },
     removeEvent (store, {id, callback}) {
-        axia.get()
+        axia.get('/event/remove/' + id)
+            .then((resp) => {
+                let retObj = {success: resp.data.success}
+                if (!resp.data.success) {
+                    retObj.cause = resp.data.error
+                }
+                callback(retObj)
+            }).catch((err) => {
+                callback({
+                    success: false,
+                    cause: err
+                })
+            })
     }
 }
 

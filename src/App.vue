@@ -22,7 +22,7 @@
                 <span>Please Login</span>
             </p>
             <div class="align-center">
-                <login-panel @input="onFormInput"></login-panel>
+                <login-panel v-model="form"></login-panel>
             </div>
             <div slot="footer">
                 <Button type="text" class="float-left">Forgot your password?</Button>
@@ -103,9 +103,6 @@
             },
             changeWidth () {
                 this.width = document.documentElement.clientWidth
-            },
-            onFormInput (form) {
-                this.form = form
             },
             login () {
                 let f = this.form
