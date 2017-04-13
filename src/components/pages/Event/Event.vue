@@ -113,7 +113,7 @@
             events () {
                 return this.$store.state.event.events.map((event) => {
                     let newEvent = JSON.parse(JSON.stringify(event))
-                    newEvent.eventTime = moment(newEvent.eventTime).format('YYYY-MM-DD hh:mm')
+                    newEvent.eventTime = moment(newEvent.eventTime).local().format('YYYY-MM-DD hh:mm')
                     switch (newEvent.eventStatus) {
                         case -1: newEvent.eventStatus = 'Past'
                             break

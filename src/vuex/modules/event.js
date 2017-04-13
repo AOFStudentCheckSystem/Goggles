@@ -72,6 +72,9 @@ const actions = {
                     cause: err
                 })
             })
+    },
+    removeEvent (store, {id, callback}) {
+        axia.get()
     }
 }
 
