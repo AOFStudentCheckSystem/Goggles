@@ -11,9 +11,9 @@
         </Form-item>
         <Form-item label="Status" prop="eventStatus">
             <Radio-group v-model="value.eventStatus">
-                <Radio label="-1">Past</Radio>
-                <Radio label="0">Future</Radio>
-                <Radio label="1">Current</Radio>
+                <Radio label="0">Scheduled</Radio>
+                <Radio label="1">Boarding</Radio>
+                <Radio label="2">Complete</Radio>
             </Radio-group>
         </Form-item>
         <Form-item>

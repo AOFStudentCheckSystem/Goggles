@@ -6,7 +6,7 @@
             <i-button type="text" size="small" @click="add"><Icon type="plus" :size="24" style="margin: 15px 30px 15px 30px"></Icon></i-button>
             <Table
                 :columns="columns"
-                :data="events"
+                :data="eventGroups"
                 :width="width - 60"
                 style="margin: 0 30px 30px 30px"
                 size="small"></Table>
@@ -15,9 +15,9 @@
             </div>
         </div>
         <Modal v-model="showModal" :mask-closable="false" @on-cancel="cancel">
-            <p slot="header" class="text-center">{{mode}} Event</p>
-            <event-add v-if="mode === 'Add'"></event-add>
-            <event-edit v-if="mode === 'Edit'" v-model="editing"></event-edit>
+            <p slot="header" class="text-center">{{mode}} Event Group</p>
+            <event-group-add v-if="mode === 'Add'"></event-group-add>
+            <!--<event-edit v-if="mode === 'Edit'" v-model="editing"></event-edit>-->
             <div slot="footer" class="text-center">Created by Yaotian Feng, Yuanchu Xie, and Peiqi Liu</div>
         </Modal>
     </div>
@@ -38,20 +38,18 @@
 </style>
 <script>
     import Spinner from '../../Spinner'
-    import moment from 'moment'
     import ResizeWatcher from '@/components/ResizeWatcher.vue'
     import {EventBus} from '../../../main'
-    import EventEdit from './EventEdit.vue'
-    import EventAdd from './EventAdd.vue'
-    import copy from '@/copy'
+//    import EventEdit from './EventEdit.vue'
+    import EventGroupAdd from './EventGroupAdd.vue'
     export default {
         components: {
             Spinner,
             ResizeWatcher,
-            EventEdit,
-            EventAdd
+//            EventEdit,
+            EventGroupAdd
         },
-        name: 'Event',
+        name: 'EventGroup',
         data () {
             return {
                 width: document.documentElement.clientWidth,
@@ -65,25 +63,10 @@
                         title: 'ID',
                         key: 'id',
                         width: 50
-//                        fixed: 'left'
                     },
                     {
                         title: 'Name',
-                        key: 'eventName'
-                    },
-                    {
-                        title: 'Description',
-                        key: 'eventDescription'
-                    },
-                    {
-                        title: 'Time',
-                        key: 'eventTime',
-                        width: 180
-                    },
-                    {
-                        title: 'Status',
-                        key: 'eventStatus',
-                        width: 100
+                        key: 'name'
                     },
                     {
                         title: 'Actions',
@@ -107,33 +90,20 @@
         },
         computed: {
             page () {
-                return this.$store.state.event.page
+                return this.$store.state.eventGroup.page
             },
             totalPages () {
-                return this.$store.state.event.totalPages
+                return this.$store.state.eventGroup.totalPages
             },
-            events () {
-                return this.$store.state.event.events.map((event) => {
-                    let newEvent = copy(event)
-                    newEvent.eventTime = moment(newEvent.eventTime).format('YYYY-MM-DD ddd HH:mm')
-                    switch (newEvent.eventStatus) {
-                        case 0: newEvent.eventStatus = 'Scheduled'
-                            break
-                        case 1: newEvent.eventStatus = 'Boarding'
-                            break
-                        case 2: newEvent.eventStatus = 'Complete'
-                            break
-                        default: newEvent.eventStatus = 'Unknown'
-                    }
-                    return newEvent
-                })
+            eventGroups () {
+                return this.$store.state.eventGroup.eventGroups
             }
         },
         methods: {
             updateList (first = false) {
                 const self = this
                 this.loading = true
-                this.$store.dispatch('fetchEvents', {
+                this.$store.dispatch('fetchEventGroups', {
                     page: self.page,
                     callback (ret) {
                         if (ret.success) {
@@ -151,29 +121,28 @@
                 this.width = document.documentElement.clientWidth - this.sidenav
             },
             changePage (newPage) {
-//                console.log(newPage)
-                this.$store.commit('EVENTS_PAGE', newPage - 1)
+                this.$store.commit('EVENT_GROUPS_PAGE', newPage - 1)
                 this.updateList()
             },
             edit (index) {
-                this.editing = copy(this.$store.state.event.events[index])
-                this.editing.eventTime = moment(this.editing.eventTime).toDate()
+                this.editing = this.eventGroups[index]
                 this.mode = 'Edit'
             },
             remove (index) {
-                const self = this
-                this.$store.dispatch('removeEvent', {
-                    id: this.events[index].eventId,
-                    callback (ret) {
-                        if (ret.success) {
-                            self.$Message.success('Event removed!')
-                        } else {
-                            self.$Message.error('An error has occurred!')
-                            console.error(ret.cause)
-                        }
-                        self.updateList()
-                    }
-                })
+                // TODO: Remove
+//                const self = this
+//                this.$store.dispatch('removeEvent', {
+//                    id: this.events[index].eventId,
+//                    callback (ret) {
+//                        if (ret.success) {
+//                            self.$Message.success('Event removed!')
+//                        } else {
+//                            self.$Message.error('An error has occurred!')
+//                            console.error(ret.cause)
+//                        }
+//                        self.updateList()
+//                    }
+//                })
             },
             cancel () {
                 this.mode = false

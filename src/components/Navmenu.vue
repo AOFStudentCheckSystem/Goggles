@@ -1,7 +1,7 @@
 <template>
     <Menu mode="vertical"
           theme="dark"
-          activeName="dashboard"
+          :activeName="activeName"
           @on-select="onSelect"
           :accordion="true"
           class="side-menu"
@@ -62,6 +62,11 @@
         watch: {
             hideText (newVal, oldVal) {
                 this.sendSidenav()
+            }
+        },
+        data () {
+            return {
+                activeName: this.$route.name
             }
         },
         mounted () {

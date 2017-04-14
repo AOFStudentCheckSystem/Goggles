@@ -1,0 +1,74 @@
+<template>
+    <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="64">
+        <Form-item label="Name" prop="name">
+            <Input v-model="formValidate.name"></Input>
+        </Form-item>
+        <Form-item label="Events" prop="groupItems" disabled>
+            <Transfer
+                :data="events"
+                :target-keys="formValidate.groupItems"
+                filterable
+                :filter-method="filterMethod"
+                :titles="['Available', 'Selected']"></Transfer>
+        </Form-item>
+        <Form-item>
+            <Button type="primary" @click="handleSubmit('formValidate')" :disabled="loading">{{loading?'Please wait':'Submit'}}</Button>
+            <Button type="ghost" @click="handleReset('formValidate')" style="margin-left: 8px">Reset</Button>
+        </Form-item>
+    </Form>
+</template>
+
+<style scoped>
+
+</style>
+
+<script>
+    import {EventBus} from '../../../main'
+    export default {
+        name: 'EventGroupAdd',
+        data () {
+            return {
+                formValidate: {
+                    name: '',
+                    groupItems: []
+                },
+                ruleValidate: {
+                    name: [
+                        {required: true, message: 'Please name the event group', trigger: 'blur'}
+                    ]
+                },
+                events: [],
+                loading: true
+            }
+        },
+        methods: {
+            handleSubmit (name) {
+                this.$refs[name].validate((valid) => {
+                    if (valid) {
+                        const self = this
+                        this.$store.dispatch('newEventGroup', {
+                            form: this.formValidate,
+                            callback (ret) {
+                                if (ret.success) {
+                                    self.$Message.success('Event group added!')
+                                } else {
+                                    self.$Message.error('An error has occurred!')
+                                    console.error(ret.cause)
+                                }
+                                EventBus.$emit('form-submit')
+                            }
+                        })
+                    } else {
+                        this.$Message.error('Form is not valid!')
+                    }
+                })
+            },
+            handleReset (name) {
+                this.$refs[name].resetFields()
+            },
+            filterMethod (data, query) {
+                return data.label.indexOf(query) > -1
+            }
+        }
+    }
+</script>
