@@ -62,12 +62,6 @@
                 editing: null,
                 columns: [
                     {
-                        title: 'ID',
-                        key: 'id',
-                        width: 50
-//                        fixed: 'left'
-                    },
-                    {
                         title: 'Name',
                         key: 'eventName'
                     },

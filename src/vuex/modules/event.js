@@ -119,6 +119,26 @@ const actions = {
                     cause: err
                 })
             })
+    },
+    fetchAllEvents (store, {callback}) {
+        axia.get('/event/listall', {
+            params: {
+                sort: 'eventTime,desc'
+            }
+        })
+            .then((resp) => {
+                // console.log(resp.data)
+                callback({
+                    success: true,
+                    data: resp.data.content
+                })
+            })
+            .catch((err) => {
+                callback({
+                    success: false,
+                    cause: err
+                })
+            })
     }
 }
 
