@@ -101,22 +101,64 @@ const actions = {
                     cause: err
                 })
             })
+    },
+    removeEventGroup (store, {id, callback}) {
+        axia.delete('/event/group/remove/' + id)
+            .then((resp) => {
+                let retObj = {success: resp.data.success}
+                if (!resp.data.success) {
+                    retObj.cause = resp.data.error
+                }
+                callback(retObj)
+            }).catch((err) => {
+                callback({
+                    success: false,
+                    cause: err
+                })
+            })
+    },
+    fetchSingleEventGroup (store, {eventGroupId, callback}) {
+        axia.get('/event/group/list/' + eventGroupId)
+            .then((resp) => {
+                callback({
+                    success: true,
+                    data: resp.data
+                })
+            })
+            .catch((err) => {
+                callback({
+                    success: false,
+                    cause: err
+                })
+            })
+    },
+    editEventGroup ({state}, {form, callback}) {
+        const formData = new FormData()
+        const ref = state.eventGroups.filter(eg => {
+            return eg.id === form.id
+        })[0]
+        formData.append('id', form.id)
+        if (form.name !== ref.name) {
+            formData.append('newName', form.name)
+        }
+        if (formData.has('newName')) {
+            axia.post('/event/group/edit', formData)
+            .then((resp) => {
+                let retObj = {success: resp.data.success}
+                if (!resp.data.success) {
+                    retObj.cause = resp.data.error
+                }
+                callback(retObj)
+            }).catch((err) => {
+                callback({
+                    success: false,
+                    cause: err
+                })
+            })
+        } else {
+            callback({success: true})
+        }
     }
-    // removeEvent (store, {id, callback}) {
-    //     axia.get('/event/remove/' + id)
-    //         .then((resp) => {
-    //             let retObj = {success: resp.data.success}
-    //             if (!resp.data.success) {
-    //                 retObj.cause = resp.data.error
-    //             }
-    //             callback(retObj)
-    //         }).catch((err) => {
-    //             callback({
-    //                 success: false,
-    //                 cause: err
-    //             })
-    //         })
-    // }
 }
 
 export default {

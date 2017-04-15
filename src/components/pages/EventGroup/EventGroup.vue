@@ -17,7 +17,7 @@
         <Modal v-model="showModal" :mask-closable="false" @on-cancel="cancel">
             <p slot="header" class="text-center">{{mode}} Event Group</p>
             <event-group-add v-if="mode === 'Add'"></event-group-add>
-            <!--<event-edit v-if="mode === 'Edit'" v-model="editing"></event-edit>-->
+            <event-group-edit v-if="mode === 'Edit'" :value="editing"></event-group-edit>
             <div slot="footer" class="text-center">Created by Yaotian Feng, Yuanchu Xie, and Peiqi Liu</div>
         </Modal>
     </div>
@@ -40,13 +40,13 @@
     import Spinner from '../../Spinner'
     import ResizeWatcher from '@/components/ResizeWatcher.vue'
     import {EventBus} from '../../../main'
-//    import EventEdit from './EventEdit.vue'
+    import EventGroupEdit from './EventGroupEdit.vue'
     import EventGroupAdd from './EventGroupAdd.vue'
     export default {
         components: {
             Spinner,
             ResizeWatcher,
-//            EventEdit,
+            EventGroupEdit,
             EventGroupAdd
         },
         name: 'EventGroup',
@@ -129,20 +129,19 @@
                 this.mode = 'Edit'
             },
             remove (index) {
-                // TODO: Remove
-//                const self = this
-//                this.$store.dispatch('removeEvent', {
-//                    id: this.events[index].eventId,
-//                    callback (ret) {
-//                        if (ret.success) {
-//                            self.$Message.success('Event removed!')
-//                        } else {
-//                            self.$Message.error('An error has occurred!')
-//                            console.error(ret.cause)
-//                        }
-//                        self.updateList()
-//                    }
-//                })
+                const self = this
+                this.$store.dispatch('removeEventGroup', {
+                    id: this.eventGroups[index].id,
+                    callback (ret) {
+                        if (ret.success) {
+                            self.$Message.success('Event removed!')
+                        } else {
+                            self.$Message.error('An error has occurred!')
+                            console.error(ret.cause)
+                        }
+                        self.updateList()
+                    }
+                })
             },
             cancel () {
                 this.mode = false
@@ -155,7 +154,6 @@
         mounted () {
             const self = this
             EventBus.$on('sidenav-resize', (size) => {
-//                console.log('receive sidenav-resize:' + size)
                 self.sidenav = size
                 self.magic()
             })

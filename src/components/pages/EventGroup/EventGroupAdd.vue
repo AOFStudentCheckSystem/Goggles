@@ -1,5 +1,7 @@
 <template>
-    <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="64">
+    <div>
+        <spinner v-if="loading"></spinner>
+        <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="64" v-else>
         <Form-item label="Name" prop="name">
             <Input v-model="formValidate.name"></Input>
         </Form-item>
@@ -18,6 +20,7 @@
             <Button type="ghost" @click="handleReset('formValidate')" style="margin-left: 8px">Reset</Button>
         </Form-item>
     </Form>
+    </div>
 </template>
 
 <style scoped>
@@ -26,6 +29,7 @@
 
 <script>
     import {EventBus} from '../../../main'
+    import Spinner from '@/components/Spinner'
     export default {
         name: 'EventGroupAdd',
         data () {
@@ -42,6 +46,9 @@
                 events: [],
                 loading: true
             }
+        },
+        components: {
+            Spinner
         },
         methods: {
             handleSubmit (name) {
@@ -80,17 +87,19 @@
         },
         mounted () {
             const self = this
-            this.$store.dispatch('fetchAllEvents', {callback (ret) {
-                if (ret.success) {
-                    ret.data.forEach(item => {
-                        item.key = item.eventId
-                    })
-                    self.events = ret.data
-                    self.loading = false
-                } else {
-                    this.$Message.error('An error has occurred')
-                }
-            }})
+            this.$store.dispatch('fetchAllEvents', {
+                status: 'future',
+                callback (ret) {
+                    if (ret.success) {
+                        ret.data.forEach(item => {
+                            item.key = item.eventId
+                        })
+                        self.events = ret.data
+                        self.loading = false
+                    } else {
+                        self.$Message.error('An error has occurred')
+                    }
+                }})
         }
     }
 </script>

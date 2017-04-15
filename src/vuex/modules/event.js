@@ -4,7 +4,7 @@
 
 import * as types from '../mutation-types'
 import Vue from 'vue'
-import { axia } from '../../main'
+import {axia} from '../../main'
 import moment from 'moment'
 
 const state = {
@@ -36,19 +36,19 @@ const actions = {
                 sort: 'eventTime,desc'
             }
         })
-            .then((resp) => {
-                commit(types.EVENTS, resp.data)
-                commit(types.EVENTS_PAGE, page)
-                callback({
-                    success: true
-                })
+        .then((resp) => {
+            commit(types.EVENTS, resp.data)
+            commit(types.EVENTS_PAGE, page)
+            callback({
+                success: true
             })
-            .catch((err) => {
-                callback({
-                    success: false,
-                    cause: err
-                })
+        })
+        .catch((err) => {
+            callback({
+                success: false,
+                cause: err
             })
+        })
     },
     addEvent (store, {form, callback}) {
         const formData = new FormData()
@@ -60,26 +60,27 @@ const actions = {
             formData.append('descriptions', form.descriptions)
         }
         axia.post('/event/create', formData)
-            .then((resp) => {
-                let retObj = {success: resp.data.success}
-                if (!resp.data.success) {
-                    retObj.cause = resp.data.error
-                }
-                callback(retObj)
-            }).catch((err) => {
-                callback({
-                    success: false,
-                    cause: err
-                })
+        .then((resp) => {
+            let retObj = {success: resp.data.success}
+            if (!resp.data.success) {
+                retObj.cause = resp.data.error
+            }
+            callback(retObj)
+        }).catch((err) => {
+            callback({
+                success: false,
+                cause: err
             })
+        })
     },
     editEvent ({state}, {form, callback}) {
         const formData = new FormData()
-        const ref = state.events.filter(ev => { return ev.eventId === form.eventId })[0]
+        const ref = state.events.filter(ev => {
+            return ev.eventId === form.eventId
+        })[0]
         formData.append('eventId', form.eventId)
-        let time = Number(moment(form.eventTime).format('x'))
-        if (time !== ref.eventTime) {
-            formData.append('newTime', time)
+        if (form.eventName !== ref.eventName) {
+            formData.append('newName', form.eventName)
         }
         if (form.eventDescription !== ref.eventDescription) {
             formData.append('newDescription', form.eventDescription)
@@ -87,26 +88,8 @@ const actions = {
         if (form.eventStatus !== ref.eventStatus) {
             formData.append('newStatus', form.eventStatus)
         }
-        if (formData.has('newTime') || formData.has('newDescription') || formData.has('newStatus')) {
+        if (formData.has('newName') || formData.has('newTime') || formData.has('newDescription') || formData.has('newStatus')) {
             axia.post('/event/edit', formData)
-                .then((resp) => {
-                    let retObj = {success: resp.data.success}
-                    if (!resp.data.success) {
-                        retObj.cause = resp.data.error
-                    }
-                    callback(retObj)
-                }).catch((err) => {
-                    callback({
-                        success: false,
-                        cause: err
-                    })
-                })
-        } else {
-            callback({success: true})
-        }
-    },
-    removeEvent (store, {id, callback}) {
-        axia.get('/event/remove/' + id)
             .then((resp) => {
                 let retObj = {success: resp.data.success}
                 if (!resp.data.success) {
@@ -119,26 +102,44 @@ const actions = {
                     cause: err
                 })
             })
+        } else {
+            callback({success: true})
+        }
     },
-    fetchAllEvents (store, {callback}) {
-        axia.get('/event/listall', {
+    removeEvent (store, {id, callback}) {
+        axia.delete('/event/remove/' + id)
+        .then((resp) => {
+            let retObj = {success: resp.data.success}
+            if (!resp.data.success) {
+                retObj.cause = resp.data.error
+            }
+            callback(retObj)
+        }).catch((err) => {
+            callback({
+                success: false,
+                cause: err
+            })
+        })
+    },
+    fetchAllEvents (store, {status = 'all', callback}) {
+        axia.get('/event/list' + (status === 'all' ? '' : '/') + status, {
             params: {
                 sort: 'eventTime,desc'
             }
         })
-            .then((resp) => {
-                // console.log(resp.data)
-                callback({
-                    success: true,
-                    data: resp.data.content
-                })
+        .then((resp) => {
+            // console.log(resp.data)
+            callback({
+                success: true,
+                data: resp.data[status === 'all' ? 'content' : 'events']
             })
-            .catch((err) => {
-                callback({
-                    success: false,
-                    cause: err
-                })
+        })
+        .catch((err) => {
+            callback({
+                success: false,
+                cause: err
             })
+        })
     }
 }
 

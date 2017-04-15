@@ -18,7 +18,6 @@
         </Form-item>
         <Form-item>
             <Button type="primary" @click="handleSubmit('formValidate')">Submit</Button>
-            <Button type="ghost" @click="handleReset('formValidate')" style="margin-left: 8px">Reset</Button>
         </Form-item>
     </Form>
 </template>
