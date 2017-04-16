@@ -34,6 +34,9 @@ const mutations = {
     },
     [types.USER_EMAIL_CHANGE] (state, {email}) {
         state.email = email
+    },
+    suicide (state) {
+        console.log(state)
     }
 }
 

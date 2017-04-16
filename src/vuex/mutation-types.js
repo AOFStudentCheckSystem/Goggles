@@ -15,3 +15,5 @@ export const EVENTS_PAGE = 'EVENTS_PAGE'
 export const EVENT_GROUPS = 'EVENT_GROUPS'
 export const EVENT_GROUPS_SIZE = 'EVENT_GROUPS_SIZE'
 export const EVENT_GROUPS_PAGE = 'EVENT_GROUPS_PAGE'
+
+export const SHEETS = 'SHEETS'

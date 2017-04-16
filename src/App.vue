@@ -142,8 +142,23 @@
                 this.loading = this.showModal
             }
         },
-        mounted () {
+        created () {
+            const self = this
             this.init()
+            axia.interceptors.response.use((response) => {
+                return response
+            }, (error) => {
+                if (error.response.status === 401) {
+                    self.$store.dispatch('verifyToken', {
+                        callback ({success}) {
+                            self.$Message.error(success ? 'You don\'t have the permission to do so.' : 'Session expired, please login again.')
+                            return Promise.reject(error)
+                        }
+                    })
+                } else {
+                    return Promise.reject(error)
+                }
+            })
         }
     }
 </script>

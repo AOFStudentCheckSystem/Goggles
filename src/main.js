@@ -13,11 +13,12 @@ import axios from 'axios'
 import 'vue-resize/dist/vue-resize.css'
 import VueResize from 'vue-resize/dist/vue-resize'
 Vue.use(VueResize)
+
+export const EventBus = new Vue()
+
 export const axia = axios.create({
     baseURL: `https://check.guardiantech.com.cn`
 })
-
-export const EventBus = new Vue()
 
 /* eslint-disable no-new */
 new Vue({
