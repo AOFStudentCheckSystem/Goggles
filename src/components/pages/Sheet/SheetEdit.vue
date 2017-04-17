@@ -22,9 +22,15 @@
                     </div>
                 </draggable>
             </Form-item>
+            <Form-item label="Status" prop="status">
+                <Radio-group v-model="formValidate.status">
+                    <Radio label="0">Future</Radio>
+                    <Radio label="1">Open</Radio>
+                    <Radio label="2">Close</Radio>
+                </Radio-group>
+            </Form-item>
             <Form-item>
                 <Button type="primary" @click="handleSubmit('formValidate')" :disabled="loading">{{loading?'Please wait':'Submit'}}</Button>
-                <Button type="ghost" @click="handleReset('formValidate')" style="margin-left: 8px">Reset</Button>
             </Form-item>
         </Form>
     </div>
@@ -54,12 +60,13 @@
     import Spinner from '@/components/Spinner'
     import draggable from 'vuedraggable'
     export default {
-        name: 'SheetAdd',
+        name: 'SheetEdit',
         data () {
             return {
                 formValidate: {
                     name: '',
-                    groups: []
+                    groups: [],
+                    status: 0
                 },
                 ruleValidate: {
                     name: [
@@ -80,25 +87,34 @@
                 this.$refs[name].validate((valid) => {
                     if (valid) {
                         const self = this
-                        this.$store.dispatch('newSheet', {
+                        this.$store.dispatch('editSheet', {
+                            id: self.value.id,
                             form: this.formValidate,
                             callback (ret) {
                                 if (ret.success) {
-                                    self.$Message.success('Event group added!')
+                                    self.$store.dispatch('setEventGroupsToSheet', {
+                                        id: self.value.id,
+                                        form: self.formValidate,
+                                        callback (ret2) {
+                                            if (ret2.success) {
+                                                self.$Message.success('Sheet edited!')
+                                                EventBus.$emit('form-submit', 2)
+                                            } else {
+                                                self.$Message.error('An error has occurred!')
+                                                console.error(ret2.cause)
+                                            }
+                                        }
+                                    })
                                 } else {
                                     self.$Message.error('An error has occurred!')
                                     console.error(ret.cause)
                                 }
-                                EventBus.$emit('form-submit', 2)
                             }
                         })
                     } else {
                         this.$Message.error('Form is not valid!')
                     }
                 })
-            },
-            handleReset (name) {
-                this.$refs[name].resetFields()
             },
             addGroups () {
                 if (this.selectedGroupsToAdd.length < 1) {
@@ -125,17 +141,26 @@
             }
         },
         mounted () {
+            this.formValidate.name = this.value.name
+            this.formValidate.groups = this.value.events
+            this.formValidate.status = this.value.status
             const self = this
             this.$store.dispatch('fetchAvailableEventGroups', {
                 callback (ret) {
                     if (ret.success) {
-//                        console.log(ret.data)
                         self.availableGroups = ret.data.groups
                         self.loading = false
                     } else {
+                        console.error(ret.cause)
                         self.$Message.error('An error has occurred')
                     }
                 }})
+        },
+        props: {
+            value: {
+                type: Object,
+                required: true
+            }
         }
     }
 </script>

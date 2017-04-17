@@ -14,7 +14,7 @@
         <Modal v-model="showModal" :mask-closable="false" @on-cancel="cancel">
             <p slot="header" class="text-center">{{mode}} Sheet</p>
             <sheet-add v-if="mode === 'Add'"></sheet-add>
-            <!--<event-edit v-if="mode === 'Edit'" v-model="editing"></event-edit>-->
+            <sheet-edit v-if="mode === 'Edit'" :value="editing"></sheet-edit>
             <div slot="footer" class="text-center">Created by Yaotian Feng, Yuanchu Xie, and Peiqi Liu</div>
         </Modal>
     </div>
@@ -29,14 +29,14 @@
     import Spinner from '../../Spinner'
     import ResizeWatcher from '@/components/ResizeWatcher.vue'
     import {EventBus} from '../../../main'
-//    import EventEdit from './EventEdit.vue'
+    import SheetEdit from './SheetEdit.vue'
     import SheetAdd from './SheetAdd.vue'
     import copy from '@/copy'
     export default {
         components: {
             Spinner,
             ResizeWatcher,
-//            EventEdit,
+            SheetEdit,
             SheetAdd
         },
         name: 'Sheet',
@@ -70,7 +70,9 @@
                         width: 100,
                         render (row, column, index) {
                             return `<i-button type="text" size="small" @click="edit(${index})">
-                                        <Icon type="edit" :size="16"></Icon></i-button>`
+                                        <Icon type="edit" :size="16"></Icon></i-button>
+                                    <i-button type="text" size="small" @click="remove(${index})">
+                                        <Icon type="trash-a" :size="16"></Icon></i-button>`
                         }
                     }
                 ]
@@ -122,6 +124,21 @@
                 this.editing = copy(this.$store.state.sheet.sheets[index])
                 this.mode = 'Edit'
             },
+            remove (index) {
+                const self = this
+                this.$store.dispatch('removeSheet', {
+                    id: this.sheets[index].id,
+                    callback (ret) {
+                        if (ret.success) {
+                            self.$Message.success('Sheet removed!')
+                        } else {
+                            self.$Message.error('An error has occurred!')
+                            console.error(ret.cause)
+                        }
+                        self.updateList()
+                    }
+                })
+            },
             cancel () {
                 this.mode = false
                 this.editing = null
@@ -137,9 +154,11 @@
                 self.sidenav = size
                 self.magic()
             })
-            EventBus.$on('form-submit', () => {
-                self.cancel()
-                self.updateList()
+            EventBus.$on('form-submit', (channel) => {
+                if (channel === 2) {
+                    self.cancel()
+                    self.updateList()
+                }
             })
             this.updateList(true)
         }

@@ -71,7 +71,7 @@
                                     self.$Message.error('An error has occurred!')
                                     console.error(ret.cause)
                                 }
-                                EventBus.$emit('form-submit')
+                                EventBus.$emit('form-submit', 1)
                             }
                         })
                     } else {
@@ -119,25 +119,16 @@
                             item.key = item.eventId
                         })
                         self.events = ret.data
-                        self.$store.dispatch('fetchSingleEventGroup', {
-                            eventGroupId: self.formValidate.id,
-                            callback (ret2) {
-                                if (ret2.success) {
-                                    ret2.data.events.forEach((evt) => {
-                                        if (self.events.filter((e) => {
-                                            return evt.eventId === e.eventId
-                                        }).length === 0) {
-                                            evt.key = evt.eventId
-                                            self.events.push(evt)
-                                        }
-                                        self.groupItems.push(evt.eventId)
-                                    })
-                                    self.loading = false
-                                } else {
-                                    this.$Message.error('An error has occurred')
-                                }
+                        self.value.events.forEach((evt) => {
+                            if (self.events.filter((e) => {
+                                return evt.eventId === e.eventId
+                            }).length === 0) {
+                                evt.key = evt.eventId
+                                self.events.push(evt)
                             }
+                            self.groupItems.push(evt.eventId)
                         })
+                        self.loading = false
                     } else {
                         this.$Message.error('An error has occurred')
                     }
@@ -152,7 +143,7 @@
         },
         beforeDestroy () {
             if (this.eventEdited) {
-                EventBus.$emit('form-submit')
+                EventBus.$emit('form-submit', 1)
             }
         }
     }

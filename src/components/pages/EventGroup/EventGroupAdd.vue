@@ -64,7 +64,7 @@
                                     self.$Message.error('An error has occurred!')
                                     console.error(ret.cause)
                                 }
-                                EventBus.$emit('form-submit')
+                                EventBus.$emit('form-submit', 1)
                             }
                         })
                     } else {

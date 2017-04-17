@@ -157,9 +157,11 @@
                 self.sidenav = size
                 self.magic()
             })
-            EventBus.$on('form-submit', () => {
-                self.cancel()
-                self.updateList()
+            EventBus.$on('form-submit', (channel) => {
+                if (channel === 1) {
+                    self.cancel()
+                    self.updateList()
+                }
             })
             this.updateList(true)
         }
