@@ -5,10 +5,10 @@
         <Form-item label="Name" prop="name">
             <Input v-model="formValidate.name"></Input>
         </Form-item>
-        <Form-item label="Events" prop="groupItems" disabled>
+        <Form-item label="Events" prop="groupItems">
             <Transfer
                 :data="events"
-                :target-keys="formValidate.groupItems"
+                :target-keys="formValidate.groups"
                 filterable
                 :filter-method="filterMethod"
                 :titles="['Available', 'Selected']"
@@ -36,7 +36,7 @@
             return {
                 formValidate: {
                     name: '',
-                    groupItems: []
+                    groups: []
                 },
                 ruleValidate: {
                     name: [
@@ -82,7 +82,7 @@
                 return item.eventName
             },
             onChange (newTargetKeys) {
-                this.formValidate.groupItems = newTargetKeys
+                this.formValidate.groups = newTargetKeys
             }
         },
         mounted () {

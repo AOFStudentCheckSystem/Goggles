@@ -13,7 +13,7 @@
         </div>
         <Modal v-model="showModal" :mask-closable="false" @on-cancel="cancel">
             <p slot="header" class="text-center">{{mode}} Event</p>
-            <!--<event-add v-if="mode === 'Add'"></event-add>-->
+            <sheet-add v-if="mode === 'Add'"></sheet-add>
             <!--<event-edit v-if="mode === 'Edit'" v-model="editing"></event-edit>-->
             <div slot="footer" class="text-center">Created by Yaotian Feng, Yuanchu Xie, and Peiqi Liu</div>
         </Modal>
@@ -30,14 +30,14 @@
     import ResizeWatcher from '@/components/ResizeWatcher.vue'
     import {EventBus} from '../../../main'
 //    import EventEdit from './EventEdit.vue'
-//    import EventAdd from './EventAdd.vue'
+    import SheetAdd from './SheetAdd.vue'
     import copy from '@/copy'
     export default {
         components: {
             Spinner,
-            ResizeWatcher
+            ResizeWatcher,
 //            EventEdit,
-//            EventAdd
+            SheetAdd
         },
         name: 'Sheet',
         data () {

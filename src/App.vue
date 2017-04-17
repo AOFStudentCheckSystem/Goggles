@@ -119,7 +119,11 @@
                                 self.loading = false
                                 EventBus.$emit('login-reset')
                             } else {
-                                self.$Message.error('Login failed, please check your input!')
+                                if (ret.cause) {
+                                    self.$Message.error('Service down, please contact administrator')
+                                } else {
+                                    self.$Message.error('Login failed, please check your input!')
+                                }
                             }
                         }
                     })
@@ -148,7 +152,7 @@
             axia.interceptors.response.use((response) => {
                 return response
             }, (error) => {
-                if (error.response.status === 401) {
+                if (error.response && error.response.status === 401) {
                     self.$store.dispatch('verifyToken', {
                         callback ({success}) {
                             self.$Message.error(success ? 'You don\'t have the permission to do so.' : 'Session expired, please login again.')
