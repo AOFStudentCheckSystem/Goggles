@@ -17,7 +17,7 @@
                 <draggable v-model="formValidate.groups" style="min-height: 100px; background-color: #f0f0f0">
                     <div v-for="group in formValidate.groups" class="draggable-item">
                         {{group.name}}
-                        <i-button type="text" size="small">
+                        <i-button type="text" size="small" @click="removeGroup(group.id)">
                             <Icon type="trash-a" :size="16"></Icon></i-button>
                     </div>
                 </draggable>
@@ -99,6 +99,16 @@
                             }
                         }
                     })
+                    this.selectedGroupsToAdd = []
+                }
+            },
+            removeGroup (gid) {
+                console.log(gid)
+                for (let i = 0; i < this.formValidate.groups.length; i++) {
+                    if (gid === this.formValidate.groups[i].id) {
+                        this.availableGroups.push(this.formValidate.groups.splice(i, 1)[0])
+                        break
+                    }
                 }
             }
         },
