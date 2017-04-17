@@ -12,7 +12,7 @@
             <Form-item label="Events" prop="groupItems">
                 <Transfer
                     :data="events"
-                    :target-keys="groups"
+                    :target-keys="groupItems"
                     filterable
                     :filter-method="filterMethod"
                     :titles="['Available', 'Selected']"
@@ -46,7 +46,7 @@
                 formValidate: {
                     name: ''
                 },
-                groups: [],
+                groupItems: [],
                 ruleValidate: {
                     name: [
                         {required: true, message: 'Please name the event group', trigger: 'blur'}
@@ -130,7 +130,7 @@
                                             evt.key = evt.eventId
                                             self.events.push(evt)
                                         }
-                                        self.groups.push(evt.eventId)
+                                        self.groupItems.push(evt.eventId)
                                     })
                                     self.loading = false
                                 } else {
