@@ -12,7 +12,7 @@
                 size="small"></Table>
         </div>
         <Modal v-model="showModal" :mask-closable="false" @on-cancel="cancel">
-            <p slot="header" class="text-center">{{mode}} Event</p>
+            <p slot="header" class="text-center">{{mode}} Sheet</p>
             <sheet-add v-if="mode === 'Add'"></sheet-add>
             <!--<event-edit v-if="mode === 'Edit'" v-model="editing"></event-edit>-->
             <div slot="footer" class="text-center">Created by Yaotian Feng, Yuanchu Xie, and Peiqi Liu</div>

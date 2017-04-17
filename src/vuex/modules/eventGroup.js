@@ -51,8 +51,8 @@ const actions = {
     newEventGroup (store, {form, callback}) {
         const formData = new FormData()
         formData.append('name', form.name)
-        if (form.groups) {
-            formData.append('groups', JSON.stringify(form.groups))
+        if (form.groupItems) {
+            formData.append('groupItems', JSON.stringify(form.groupItems))
         }
         axia.post('/event/group/new', formData)
             .then((resp) => {

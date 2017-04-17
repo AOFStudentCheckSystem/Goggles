@@ -36,7 +36,9 @@ const actions = {
         const formData = new FormData()
         formData.append('name', form.name)
         if (form.groups) {
-            formData.append('groups', JSON.stringify(form.groups))
+            formData.append('groups', JSON.stringify(form.groups.map(g => {
+                return g.id
+            })))
         }
         axia.post('/signup/create', formData)
         .then((resp) => {

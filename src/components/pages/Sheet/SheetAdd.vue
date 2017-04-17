@@ -14,11 +14,11 @@
                     <Icon type="plus" :size="20"></Icon></i-button>
                 <h3>Selected Groups</h3>
                 <p>Order here will show up on actual sheet</p>
-                <draggable v-model="formValidate.groups" style="min-height: 100px; background-color: #f0f0f0">
-                    <div v-for="group in formValidate.groups" class="draggable-item">
-                        {{group.name}}
+                <draggable v-model="formValidate.groups" class="draggable">
+                    <div v-for="group in formValidate.groups" class="draggable-div">
+                        <span class="draggable-span">{{group.name}}
                         <i-button type="text" size="small" @click="removeGroup(group.id)">
-                            <Icon type="trash-a" :size="16"></Icon></i-button>
+                            <Icon type="trash-a" :size="16"></Icon></i-button></span>
                     </div>
                 </draggable>
             </Form-item>
@@ -31,8 +31,21 @@
 </template>
 
 <style scoped>
-    .draggable-item {
-
+    .draggable {
+        min-height: 100px;
+        background-color: #f0f0f0;
+        padding-top: 1px;
+        padding-bottom: 1px;
+        border-radius: 5px;
+    }
+    .draggable-div {
+        margin: 5px;
+        padding: 5px;
+        background-color: white;
+        border-radius: 5px;
+    }
+    .draggable-span {
+        font-size: 10pt;
     }
 </style>
 
@@ -67,7 +80,7 @@
                 this.$refs[name].validate((valid) => {
                     if (valid) {
                         const self = this
-                        this.$store.dispatch('newEventGroup', {
+                        this.$store.dispatch('newSheet', {
                             form: this.formValidate,
                             callback (ret) {
                                 if (ret.success) {
@@ -103,10 +116,9 @@
                 }
             },
             removeGroup (gid) {
-                console.log(gid)
                 for (let i = 0; i < this.formValidate.groups.length; i++) {
                     if (gid === this.formValidate.groups[i].id) {
-                        this.availableGroups.push(this.formValidate.groups.splice(i, 1)[0])
+                        this.availableGroups.splice(0, 0, this.formValidate.groups.splice(i, 1)[0])
                         break
                     }
                 }
