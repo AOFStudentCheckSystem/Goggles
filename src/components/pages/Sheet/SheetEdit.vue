@@ -142,7 +142,11 @@
         },
         mounted () {
             this.formValidate.name = this.value.name
-            this.formValidate.groups = this.value.events
+            this.formValidate.groups = this.value.events.sort((a, b) => {
+                return b.weight - a.weight
+            }).map(event => {
+                return event.eventGroup
+            })
             this.formValidate.status = this.value.status
             const self = this
             this.$store.dispatch('fetchAvailableEventGroups', {

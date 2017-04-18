@@ -36,8 +36,12 @@ const actions = {
         const formData = new FormData()
         formData.append('name', form.name)
         if (form.groups) {
+            let i = form.groups.length - 1
             formData.append('groups', JSON.stringify(form.groups.map(g => {
-                return g.id
+                return {
+                    eventGroupId: g.id,
+                    weight: i--
+                }
             })))
         }
         axia.post('/signup/create', formData)
@@ -130,15 +134,13 @@ const actions = {
     },
     setEventGroupsToSheet ({state}, {id, form, callback}) {
         let formData = new FormData()
-        const ref = state.sheets.filter(s => {
-            return s.id === id
-        })[0]
-        // console.log(form.groups)
-        if (form.groups !== ref.groups) {
-            formData.append('group', JSON.stringify(form.groups.map(g => {
-                return g.id
-            })))
-        }
+        let i = form.groups.length - 1
+        formData.append('group', JSON.stringify(form.groups.map(g => {
+            return {
+                eventGroupId: g.id,
+                weight: i--
+            }
+        })))
         if (formData.has('group')) {
             axia.post('/signup/edit/' + id + '/set', formData)
             .then((resp) => {

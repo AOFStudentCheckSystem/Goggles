@@ -152,7 +152,7 @@
             axia.interceptors.response.use((response) => {
                 return response
             }, (error) => {
-                if (error.response && error.response.status === 401) {
+                if (error.response && error.response.status === 401 && !error.response.config.url.endsWith('auth/verify')) {
                     self.$store.dispatch('verifyToken', {
                         callback ({success}) {
                             self.$Message.error(success ? 'You don\'t have the permission to do so.' : 'Session expired, please login again.')

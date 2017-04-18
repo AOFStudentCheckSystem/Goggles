@@ -84,7 +84,7 @@
                             form: this.formValidate,
                             callback (ret) {
                                 if (ret.success) {
-                                    self.$Message.success('Event group added!')
+                                    self.$Message.success('Sheet added!')
                                 } else {
                                     self.$Message.error('An error has occurred!')
                                     console.error(ret.cause)
