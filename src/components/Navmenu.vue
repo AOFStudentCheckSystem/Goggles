@@ -3,13 +3,12 @@
           theme="dark"
           :activeName="activeName"
           @on-select="onSelect"
-          :accordion="true"
           class="side-menu"
           :class="{'hide-text': hideText}"
           :width="hideText?'80px':'240px'">
         <Menu-item name="Dashboard">
             <Icon type="ios-speedometer" :size="iconSize"></Icon>
-            <span class="text"> Dashboard</span>
+            <span class="text">Dashboard</span>
         </Menu-item>
         <Menu-item name="Event">
             <Icon type="chatbox" :size="iconSize"></Icon>
@@ -22,6 +21,10 @@
         <Menu-item name="Sheet">
             <Icon type="ios-calendar" :size="iconSize"></Icon>
             <span class="text">Sign-up Sheets</span>
+        </Menu-item>
+        <Menu-item name="Student">
+            <Icon type="ios-people" :size="iconSize"></Icon>
+            <span class="text">Students</span>
         </Menu-item>
     </Menu>
 </template>
