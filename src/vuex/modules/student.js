@@ -27,12 +27,12 @@ const mutations = {
 }
 
 const actions = {
-    fetchStudents ({state, commit}, {page, callback}) {
+    fetchStudents ({state, commit}, {page, sort = 'lastName,asc', callback}) {
         axia.get('/student/list', {
             params: {
                 size: state.size,
                 page: page,
-                sort: 'lastName,asc'
+                sort: sort
             }
         })
         .then((resp) => {

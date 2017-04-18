@@ -1,8 +1,8 @@
 <template>
     <div>
         <resize-watcher @resize="magic" listenWindow listenDOM></resize-watcher>
-        <spinner v-if="loading"></spinner>
-        <div v-else>
+        <spinner v-if="loading" :class="{'hide': loading}"></spinner>
+        <div v-show="!loading">
             <i-button type="text" size="small" @click="add"><Icon type="plus" :size="24" style="margin: 15px 30px 15px 30px"></Icon></i-button>
             <Table
                 :columns="columns"
@@ -23,6 +23,9 @@
 <style scoped>
     .text-center {
         text-align:center
+    }
+    .hide {
+        height: 0;
     }
 </style>
 <script>

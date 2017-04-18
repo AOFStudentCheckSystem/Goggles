@@ -1,15 +1,16 @@
 <template>
     <div>
         <resize-watcher @resize="magic" listenWindow listenDOM></resize-watcher>
-        <spinner v-if="loading"></spinner>
-        <div v-else>
+        <spinner v-if="loading" :class="{'hide': loading}"></spinner>
+        <div v-show="!loading">
             <i-button type="text" size="small" @click="add"><Icon type="plus" :size="24" style="margin: 15px 30px 15px 30px"></Icon></i-button>
             <Table
                 :columns="columns"
                 :data="students"
                 :width="width - 60"
                 style="margin: 0 30px 30px 30px"
-                size="small"></Table>
+                size="small"
+                @on-sort-change="sort"></Table>
             <div class="container">
                 <Page :total="totalPages" :page-size="1" :current="page + 1" @on-change="changePage"></Page>
             </div>
@@ -34,6 +35,9 @@
     }
     .text-center {
         text-align:center
+    }
+    .hide {
+        height: 0;
     }
 </style>
 <script>
@@ -66,15 +70,18 @@
                     },
                     {
                         title: 'Last Name',
-                        key: 'lastName'
+                        key: 'lastName',
+                        sortable: 'custom'
                     },
                     {
                         title: 'First Name',
-                        key: 'firstName'
+                        key: 'firstName',
+                        sortable: 'custom'
                     },
                     {
                         title: 'Preferred Name',
-                        key: 'preferredName'
+                        key: 'preferredName',
+                        sortable: 'custom'
                     },
                     {
                         title: 'Email',
@@ -96,7 +103,8 @@
                                         <Icon type="trash-a" :size="16"></Icon></i-button>`
                         }
                     }
-                ]
+                ],
+                sortStr: 'lastName,asc'
             }
         },
         watch: {
@@ -126,6 +134,7 @@
                 this.loading = true
                 this.$store.dispatch('fetchStudents', {
                     page: self.page,
+                    sort: this.sortStr,
                     callback (ret) {
                         if (ret.success) {
                             self.loading = false
@@ -171,6 +180,10 @@
             },
             add () {
                 this.mode = 'Add'
+            },
+            sort ({column, key, order}) {
+                this.sortStr = key + ',' + order
+                this.updateList()
             }
         },
         mounted () {
