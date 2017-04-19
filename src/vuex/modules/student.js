@@ -82,7 +82,7 @@ const actions = {
     editStudent ({state}, {form, callback}) {
         const formData = new FormData()
         const ref = state.students.filter(s => {
-            return s.idNumber === form.idNumber
+            return Number(s.idNumber) === form.idNumber
         })[0]
         formData.append('idNumber', form.idNumber)
         if (form.firstName !== ref.firstName) {
@@ -97,7 +97,19 @@ const actions = {
         if (form.email !== ref.email) {
             formData.append('email', form.email)
         }
-        if (formData.has('firstName') || formData.has('lastName') || formData.has('preferredName') || formData.has('email')) {
+        if (form.cardSecret !== ref.cardSecret) {
+            formData.append('cardSecret', form.cardSecret)
+        }
+        if (form.studentType !== ref.studentType) {
+            formData.append('studentType', form.studentType)
+        }
+        if (form.dorm !== ref.dorm) {
+            formData.append('dorm', form.dorm)
+        }
+        if (form.grade !== ref.grade) {
+            formData.append('grade', form.grade)
+        }
+        if (formData.has('firstName') || formData.has('lastName') || formData.has('preferredName') || formData.has('email') || formData.has('cardSecret') || formData.has('studentType') || formData.has('dorm') || formData.has('grade')) {
             axia.post('/student/edit', formData)
             .then((resp) => {
                 let retObj = {success: resp.data.success}
@@ -137,16 +149,16 @@ const actions = {
             }
         })
         .then((resp) => {
-            console.log('recieved')
+            // console.log('recieved')
             let allStudents = resp.data.filter((student) => {
                 return student[filter].toLowerCase().includes(search.toLowerCase())
             })
-            console.log(allStudents.length)
+            // console.log(allStudents.length)
             commit(types.STUDENTS, {
                 content: allStudents,
                 totalPages: Math.max(Math.floor((allStudents.length - 1) / state.size), 0) + 1
             })
-            console.log(state.totalPages)
+            // console.log(state.totalPages)
             commit(types.STUDENTS_PAGE, page)
             commit(types.STUDENTS_SEARCHING, true)
             callback({

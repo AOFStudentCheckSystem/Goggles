@@ -15,7 +15,7 @@
         to   { transform: rotate(360deg);}
     }
     .cent {
-        margin-top: 25%;
+        margin-top: 20%;
     }
 </style>
 

@@ -24,7 +24,7 @@
         <Modal v-model="showModal" :mask-closable="false" @on-cancel="cancel">
             <p slot="header" class="text-center">{{mode}} Student</p>
             <student-add v-if="mode === 'Add'"></student-add>
-            <!--<event-edit v-if="mode === 'Edit'" v-model="editing"></event-edit>-->
+            <student-edit v-if="mode === 'Edit'" v-model="editing"></student-edit>
             <div slot="footer" class="text-center">Created by Yaotian Feng, Yuanchu Xie, and Peiqi Liu</div>
         </Modal>
     </div>
@@ -50,14 +50,14 @@
     import Spinner from '../../Spinner'
     import ResizeWatcher from '@/components/ResizeWatcher.vue'
     import {EventBus} from '../../../main'
-//    import EventEdit from './EventEdit.vue'
+    import StudentEdit from './StudentEdit.vue'
     import StudentAdd from './StudentAdd.vue'
     import copy from '@/copy'
     export default {
         components: {
             Spinner,
             ResizeWatcher,
-//            EventEdit,
+            StudentEdit,
             StudentAdd
         },
         name: 'Student',

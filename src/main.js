@@ -17,7 +17,7 @@ Vue.use(VueResize)
 export const EventBus = new Vue()
 
 export const axia = axios.create({
-    baseURL: `https://check.guardiantech.com.cn`
+    baseURL: `https://api.aofactivities.com`
 })
 
 /* eslint-disable no-new */

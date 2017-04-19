@@ -159,6 +159,11 @@
                             return Promise.reject(error)
                         }
                     })
+                } else if (error.response && error.response.status === 403) {
+                    setTimeout(() => {
+                        self.$Message.error('You don\'t have the permission to do so.')
+                    }, 500)
+                    return Promise.reject(error)
                 } else {
                     return Promise.reject(error)
                 }
