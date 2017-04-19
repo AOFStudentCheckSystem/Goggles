@@ -10,7 +10,8 @@ const state = {
     students: [],
     size: 10,
     page: 0,
-    totalPages: 0
+    totalPages: 0,
+    searching: false
 }
 
 const mutations = {
@@ -23,6 +24,9 @@ const mutations = {
     },
     [types.STUDENTS_PAGE] (state, page) {
         state.page = page
+    },
+    [types.STUDENTS_SEARCHING] (state, bool) {
+        state.searching = bool
     }
 }
 
@@ -38,6 +42,7 @@ const actions = {
         .then((resp) => {
             commit(types.STUDENTS, resp.data)
             commit(types.STUDENTS_PAGE, page)
+            commit(types.STUDENTS_SEARCHING, false)
             callback({
                 success: true
             })
@@ -119,6 +124,36 @@ const actions = {
             }
             callback(retObj)
         }).catch((err) => {
+            callback({
+                success: false,
+                cause: err
+            })
+        })
+    },
+    searchStudents ({state, commit}, {page, search, filter, sort = 'lastName,asc', callback}) {
+        axia.get('/student/listall', {
+            params: {
+                sort: sort
+            }
+        })
+        .then((resp) => {
+            console.log('recieved')
+            let allStudents = resp.data.filter((student) => {
+                return student[filter].toLowerCase().includes(search.toLowerCase())
+            })
+            console.log(allStudents.length)
+            commit(types.STUDENTS, {
+                content: allStudents,
+                totalPages: Math.max(Math.floor((allStudents.length - 1) / state.size), 0) + 1
+            })
+            console.log(state.totalPages)
+            commit(types.STUDENTS_PAGE, page)
+            commit(types.STUDENTS_SEARCHING, true)
+            callback({
+                success: true
+            })
+        })
+        .catch((err) => {
             callback({
                 success: false,
                 cause: err

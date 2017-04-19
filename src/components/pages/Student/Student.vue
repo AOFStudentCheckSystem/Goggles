@@ -3,7 +3,13 @@
         <resize-watcher @resize="magic" listenWindow listenDOM></resize-watcher>
         <spinner v-if="loading" :class="{'hide': loading}"></spinner>
         <div v-show="!loading">
-            <i-button type="text" size="small" @click="add"><Icon type="plus" :size="24" style="margin: 15px 30px 15px 30px"></Icon></i-button>
+            <i-button type="text" size="small" @click="add"><Icon type="plus" :size="24" style="margin: 15px 30px 15px 30px; float:left"></Icon></i-button>
+            <Input v-model="searchStr" style="width: 350px; margin: 15px 30px 15px 30px; float:right" placeholder="<- Filtered by">
+                <Select v-model="searchSelected" slot="prepend" style="width: 110px">
+                    <Option v-for="item in searchList" :value="item.value" :key="item">{{item.label}}</Option>
+                </Select>
+                <Button slot="append" icon="ios-search" @click="updateList"></Button>
+            </Input>
             <Table
                 :columns="columns"
                 :data="students"
@@ -12,7 +18,7 @@
                 size="small"
                 @on-sort-change="sort"></Table>
             <div class="container">
-                <Page :total="totalPages" :page-size="1" :current="page + 1" @on-change="changePage"></Page>
+                <Page :total="total" :page-size="pageSize" :current="page + 1" @on-change="changePage"></Page>
             </div>
         </div>
         <Modal v-model="showModal" :mask-closable="false" @on-cancel="cancel">
@@ -54,7 +60,7 @@
 //            EventEdit,
             StudentAdd
         },
-        name: 'Event',
+        name: 'Student',
         data () {
             return {
                 width: document.documentElement.clientWidth,
@@ -104,7 +110,31 @@
                         }
                     }
                 ],
-                sortStr: 'lastName,asc'
+                sortStr: 'lastName,asc',
+                searchStr: '',
+                searchList: [
+                    {
+                        label: 'ID',
+                        value: 'idNumber'
+                    },
+                    {
+                        label: 'Last Name',
+                        value: 'lastName'
+                    },
+                    {
+                        label: 'First Name',
+                        value: 'firstName'
+                    },
+                    {
+                        label: 'Preferred Name',
+                        value: 'preferredName'
+                    },
+                    {
+                        label: 'Email',
+                        value: 'email'
+                    }
+                ],
+                searchSelected: 'lastName'
             }
         },
         watch: {
@@ -116,36 +146,63 @@
             page () {
                 return this.$store.state.student.page
             },
-            totalPages () {
-                return this.$store.state.student.totalPages
+            total () {
+                return this.searching ? this.$store.state.student.students.length : this.$store.state.student.totalPages
             },
             students () {
-                return this.$store.state.student.students.map((event) => {
+                let stus = this.$store.state.student.students.map((event) => {
                     let newEvent = copy(event)
                     newEvent.email = newEvent.email ? 'Yes' : 'No'
                     newEvent.cardSecret = newEvent.cardSecret ? 'Yes' : 'No'
                     return newEvent
                 })
+                const startI = this.page * this.pageSize
+                return this.searching ? stus.slice(startI, startI + Math.min(10, stus.length - startI)) : stus
+            },
+            searching () {
+                return this.$store.state.student.searching
+            },
+            pageSize () {
+                return this.searching ? this.$store.state.student.size : 1
             }
         },
         methods: {
             updateList (first = false) {
                 const self = this
                 this.loading = true
-                this.$store.dispatch('fetchStudents', {
-                    page: self.page,
-                    sort: this.sortStr,
-                    callback (ret) {
-                        if (ret.success) {
-                            self.loading = false
-                            if (first) {
-                                EventBus.$emit('require-sidenav')
+                if (this.searchStr === '') {
+                    this.$store.dispatch('fetchStudents', {
+                        page: self.page,
+                        sort: this.sortStr,
+                        callback (ret) {
+                            if (ret.success) {
+                                self.loading = false
+                                if (first) {
+                                    EventBus.$emit('require-sidenav')
+                                }
+                            } else {
+                                self.$Message.error('An error has occurred, try reload this page.')
                             }
-                        } else {
-                            self.$Message.error('An error has occurred, try reload this page.')
                         }
-                    }
-                })
+                    })
+                } else {
+                    this.$store.dispatch('searchStudents', {
+                        page: this.page,
+                        search: this.searchStr,
+                        filter: this.searchSelected,
+                        sort: this.sortStr,
+                        callback (ret) {
+                            if (ret.success) {
+                                self.loading = false
+                                if (first) {
+                                    EventBus.$emit('require-sidenav')
+                                }
+                            } else {
+                                self.$Message.error('An error has occurred, try reload this page.')
+                            }
+                        }
+                    })
+                }
             },
             magic () {
                 this.width = document.documentElement.clientWidth - this.sidenav
@@ -156,7 +213,8 @@
                 this.updateList()
             },
             edit (index) {
-                this.editing = copy(this.$store.state.student.students[index])
+                let newI = this.searching ? this.page * this.pageSize + index : index
+                this.editing = copy(this.$store.state.student.students[newI])
                 this.mode = 'Edit'
             },
             remove (index) {
@@ -182,7 +240,11 @@
                 this.mode = 'Add'
             },
             sort ({column, key, order}) {
-                this.sortStr = key + ',' + order
+                if (order === 'normal') {
+                    this.sortStr = 'lastName,asc'
+                } else {
+                    this.sortStr = key + ',' + order
+                }
                 this.updateList()
             }
         },
