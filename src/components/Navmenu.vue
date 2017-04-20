@@ -1,30 +1,37 @@
 <template>
     <Menu mode="vertical"
           theme="dark"
-          activeName="dashboard"
+          :activeName="activeName"
           @on-select="onSelect"
-          :accordion="true"
           class="side-menu"
           :class="{'hide-text': hideText}"
-          width="auto">
+          :width="hideText?'80px':'240px'">
         <Menu-item name="Dashboard">
-            <Icon type="ios-speedometer-outline" :size="iconSize"></Icon>
-            <span class="text"> Dashboard</span>
+            <Icon type="ios-speedometer" :size="iconSize"></Icon>
+            <span class="text">Dashboard</span>
         </Menu-item>
         <Menu-item name="Event">
-            <Icon type="ios-flag-outline" :size="iconSize"></Icon>
-            <span class="text"> &nbsp;&nbsp;Event Management</span>
+            <Icon type="chatbox" :size="iconSize"></Icon>
+            <span class="text">Events</span>
         </Menu-item>
-        <Menu-item name="Week">
-            <Icon type="ios-calendar-outline" :size="iconSize"></Icon>
-            <span class="text"> &nbsp;Week Management</span>
+        <Menu-item name="EventGroup">
+            <Icon type="chatboxes" :size="iconSize"></Icon>
+            <span class="text">Event Groups</span>
+        </Menu-item>
+        <Menu-item name="Sheet">
+            <Icon type="ios-calendar" :size="iconSize"></Icon>
+            <span class="text">Sign-up Sheets</span>
+        </Menu-item>
+        <Menu-item name="Student">
+            <Icon type="ios-people" :size="iconSize"></Icon>
+            <span class="text">Students</span>
         </Menu-item>
     </Menu>
 </template>
 
 <style scoped>
     .side-menu {
-        height: calc(100vh - 60px)
+        height: calc(100vh - 60px);
     }
     .hide-text .text {
         display: none;
@@ -32,15 +39,16 @@
 </style>
 
 <script>
+    import {EventBus} from '../main'
     export default {
         name: 'Navmenu',
         methods: {
             onSelect (key) {
-                console.log(key)
-                switch (key) {
-                    case 'Dashboard': this.$router.push({name: 'Dashboard'})
-                        break
-                }
+                this.$router.push({ name: key })
+            },
+            sendSidenav () {
+//                console.log('send sidenav-resize')
+                EventBus.$emit('sidenav-resize', this.hideText ? 80 : 240)
             }
         },
         props: {
@@ -53,6 +61,23 @@
             iconSize () {
                 return !this.hideText ? 24 : 36
             }
+        },
+        watch: {
+            hideText (newVal, oldVal) {
+                this.sendSidenav()
+            }
+        },
+        data () {
+            return {
+                activeName: this.$route.name
+            }
+        },
+        mounted () {
+            const self = this
+            EventBus.$on('require-sidenav', () => {
+//                console.log('receive require-sidenav')
+                self.sendSidenav()
+            })
         }
     }
 </script>
