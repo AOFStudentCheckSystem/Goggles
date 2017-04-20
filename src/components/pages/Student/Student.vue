@@ -245,7 +245,12 @@
                 } else {
                     this.sortStr = key + ',' + order
                 }
-                this.updateList()
+                if (this.searching) {
+                    this.$store.commit('STUDENTS_SORT', this.sortStr)
+//                    console.log('function end')
+                } else {
+                    this.updateList()
+                }
             }
         },
         mounted () {

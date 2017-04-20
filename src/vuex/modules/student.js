@@ -27,6 +27,16 @@ const mutations = {
     },
     [types.STUDENTS_SEARCHING] (state, bool) {
         state.searching = bool
+    },
+    [types.STUDENTS_SORT] (state, sortStr) {
+        let params = sortStr.split(',')
+        // console.log(params)
+        state.students.sort((a, b) => {
+            let ascResult = a[params[0]] < b[params[0]] ? -1 : +(a[params[0]] > b[params[0]])
+            // console.log(a[params[0]] + ' vs ' + b[params[0]] + ' => ' + (ascResult * (params[1] === 'asc' ? 1 : -1)))
+            return ascResult * (params[1] === 'asc' ? 1 : -1)
+        })
+        // console.log('sortDone')
     }
 }
 
@@ -151,7 +161,7 @@ const actions = {
         .then((resp) => {
             // console.log('recieved')
             let allStudents = resp.data.filter((student) => {
-                return student[filter].toLowerCase().includes(search.toLowerCase())
+                return student[filter].toLowerCase().startsWith(search.toLowerCase())
             })
             // console.log(allStudents.length)
             commit(types.STUDENTS, {
