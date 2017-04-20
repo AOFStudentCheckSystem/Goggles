@@ -18,6 +18,11 @@
             <p slot="header" class="text-center">{{mode}} Event</p>
             <event-add v-if="mode === 'Add'"></event-add>
             <event-edit v-if="mode === 'Edit'" v-model="editing"></event-edit>
+            <div v-if="mode === 'Delete'">
+                <h1 class="text-center" style="margin-bottom: 20px">Are you sure?</h1>
+                <Button type="primary" class="button" long @click="cancel">Cancel</Button>
+                <Button type="error" class="button" long @click="remove(editing);cancel()">Confirm Delete</Button>
+            </div>
             <div slot="footer" class="text-center">Created by Yaotian Feng, Yuanchu Xie, and Peiqi Liu</div>
         </Modal>
     </div>
@@ -38,8 +43,8 @@
     .hide {
         height: 0;
     }
-    @media print {
-        #header, #footer, #nav { display: none !important; }
+    .button {
+        margin-bottom: 10px;
     }
 </style>
 <script>
@@ -93,7 +98,7 @@
                         render (row, column, index) {
                             return `<i-button type="text" size="small" @click="edit(${index})">
                                         <Icon type="edit" :size="16"></Icon></i-button>
-                                    <i-button type="text" size="small" @click="remove(${index})">
+                                    <i-button type="text" size="small" @click="fakeDelete(${index})">
                                         <Icon type="trash-a" :size="16"></Icon></i-button>
                                     <i-button type="text" size="small" @click="view(${index})">
                                         <Icon type="ios-eye" :size="16"></Icon></i-button>`
@@ -162,10 +167,14 @@
                 this.editing.eventTime = moment(this.editing.eventTime).toDate()
                 this.mode = 'Edit'
             },
-            remove (index) {
+            fakeDelete (index) {
+                this.editing = this.events[index].eventId
+                this.mode = 'Delete'
+            },
+            remove (id) {
                 const self = this
                 this.$store.dispatch('removeEvent', {
-                    id: this.events[index].eventId,
+                    id: id,
                     callback (ret) {
                         if (ret.success) {
                             self.$Message.success('Event removed!')

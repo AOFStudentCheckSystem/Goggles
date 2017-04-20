@@ -25,6 +25,11 @@
             <p slot="header" class="text-center">{{mode}} Student</p>
             <student-add v-if="mode === 'Add'"></student-add>
             <student-edit v-if="mode === 'Edit'" v-model="editing"></student-edit>
+            <div v-if="mode === 'Delete'">
+                <h1 class="text-center" style="margin-bottom: 20px">Are you sure?</h1>
+                <Button type="primary" class="button" long @click="cancel">Cancel</Button>
+                <Button type="error" class="button" long @click="remove(editing);cancel()">Confirm Delete</Button>
+            </div>
             <div slot="footer" class="text-center">Created by Yaotian Feng, Yuanchu Xie, and Peiqi Liu</div>
         </Modal>
     </div>
@@ -44,6 +49,9 @@
     }
     .hide {
         height: 0;
+    }
+    .button {
+        margin-bottom: 10px;
     }
 </style>
 <script>
@@ -105,7 +113,7 @@
                         render (row, column, index) {
                             return `<i-button type="text" size="small" @click="edit(${index})">
                                         <Icon type="edit" :size="16"></Icon></i-button>
-                                    <i-button type="text" size="small" @click="remove(${index})">
+                                    <i-button type="text" size="small" @click="notImplemented">
                                         <Icon type="trash-a" :size="16"></Icon></i-button>`
                         }
                     }
@@ -217,10 +225,17 @@
                 this.editing = copy(this.$store.state.student.students[newI])
                 this.mode = 'Edit'
             },
-            remove (index) {
+            notImplemented () {
+                this.$Message.warning('This feature is not implemented!')
+            },
+            fakeDelete (index) {
+                this.editing = this.students[index].idNumber
+                this.mode = 'Delete'
+            },
+            remove (id) {
                 const self = this
                 this.$store.dispatch('removeStudent', {
-                    id: this.students[index].idNumber,
+                    id: id,
                     callback (ret) {
                         if (ret.success) {
                             self.$Message.success('Student removed!')
