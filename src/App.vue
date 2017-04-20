@@ -2,7 +2,7 @@
     <div>
         <resize-watcher @resize="changeWidth" listenWindow></resize-watcher>
         <navbar class="navbar" @signOut="init"></navbar>
-        <div class="container">
+        <div class="body">
             <navmenu :hideText="hideText" class="nav-menu-width"></navmenu>
             <div class="main-content">
                 <div class="header">
@@ -45,10 +45,6 @@
         height: 4em;
         box-shadow: 0 1px 1px rgba(0,0,0,.1);
     }
-    .container {
-        display: -webkit-flex;
-        display: flex
-    }
     .main-content {
         -webkit-flex: 1;
         flex: 1;
@@ -79,6 +75,19 @@
             right: 0;
             top: 0;
         }
+
+        .page-break-after {
+            page-break-after: always;
+        }
+    }
+    .body {
+        position: absolute;
+        top: 60px;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        display: -webkit-flex;
+        display: flex;
     }
 </style>
 <script>

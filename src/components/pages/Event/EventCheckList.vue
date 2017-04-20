@@ -1,7 +1,7 @@
 <template>
     <div>
         <spinner v-if="loading" :class="{'hide': loading}"></spinner>
-        <div v-show="!loading" style="padding-bottom: 2000px">
+        <div v-show="!loading">
             <i-button type="text" size="small" @click="$router.push({name: 'Event'})"
                       style="margin: 15px 5px 15px 30px">
                 <Icon type="chevron-left" :size="24"></Icon>
