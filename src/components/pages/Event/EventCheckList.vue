@@ -1,8 +1,9 @@
 <template>
     <div>
         <spinner v-if="loading" :class="{'hide': loading}"></spinner>
-        <div v-show="!loading">
-            <i-button type="text" size="small" @click="$router.push({name: 'Event'})" style="margin: 15px 5px 15px 30px">
+        <div v-show="!loading" style="padding-bottom: 2000px">
+            <i-button type="text" size="small" @click="$router.push({name: 'Event'})"
+                      style="margin: 15px 5px 15px 30px">
                 <Icon type="chevron-left" :size="24"></Icon>
             </i-button>
             <i-button type="text" size="small" style="margin: 15px 30px 15px 5px" @click="print">
@@ -28,16 +29,16 @@
 <style scoped>
     .container {
         display: -webkit-flex;
-        display:         flex;
+        display: flex;
         -webkit-align-items: center;
         align-items: center;
         -webkit-justify-content: center;
         justify-content: center;
     }
+
     .hide {
         height: 0;
     }
-
 </style>
 <script>
     import Spinner from '../../Spinner'
@@ -100,14 +101,16 @@
                                 self.event = ret.data.records[0].event
                                 self.event.eventTime = moment(self.event.eventTime).format('ddd MM/DD HH:mm')
                             }
-                            self.data = ret.data.records.map(r => {
+                            self.data = ret.data.records.sort((a, b) => {
+                                return (a.student.lastName < b.student.lastName ? -1 : (a.student.lastName > b.student.lastName ? 1 : 0))
+                            }).map(r => {
                                 let record = copy(r)
                                 record.lastName = record.student.lastName
                                 record.firstName = record.student.firstName
                                 record.preferredName = record.student.preferredName
                                 record.dorm = record.student.dorm
                                 record.signupTime = record.signupTime >= 0 ? 'Yes' : 'No'
-                                record.checkInTime = moment(record.checkInTime).format('HH:mm:ss')
+                                record.checkInTime = record.checkInTime >= 0 ? moment(record.checkInTime).format('HH:mm:ss') : 'Left'
                                 return record
                             })
                             self.loading = false

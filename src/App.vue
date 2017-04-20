@@ -34,6 +34,9 @@
     </div>
 </template>
 <style>
+    body {
+        overflow-y: hidden;
+    }
     .navbar {
         position: fixed;
         top: 0;
@@ -49,6 +52,7 @@
     .main-content {
         -webkit-flex: 1;
         flex: 1;
+        overflow: auto;
     }
     .align-center {
         text-align:center
