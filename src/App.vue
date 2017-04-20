@@ -1,11 +1,11 @@
 <template>
     <div>
         <resize-watcher @resize="changeWidth" listenWindow></resize-watcher>
-        <navbar class="navbar" @signOut="init"></navbar>
-        <div class="body">
-            <navmenu :hideText="hideText" class="nav-menu-width"></navmenu>
+        <navbar class="navbar no-print" @signOut="init"></navbar>
+        <div class="below-top-nav">
+            <navmenu :hideText="hideText" class="nav-menu-width no-print"></navmenu>
             <div class="main-content">
-                <div class="header">
+                <div class="header no-print">
                     <Button type="text" @click="toggleClick" v-if="width > 768">
                         <Icon type="navicon" size="32"></Icon>
                     </Button>
@@ -61,26 +61,21 @@
         flex-shrink: 0;
     }
     @media print {
-        body * {
-            visibility: hidden;
+        * {
+            visibility: hidden !important;
+            position: relative !important;
         }
-
         .print-section, .print-section * {
-            visibility: visible;
+            visibility: visible !important;
         }
-
         .print-section {
-            position: fixed;
-            left: 0;
-            right: 0;
-            top: 0;
+            margin-top: -50px !important;
         }
-
-        .page-break-after {
-            page-break-after: always;
+        .no-print {
+            display: none !important;
         }
     }
-    .body {
+    .below-top-nav {
         position: absolute;
         top: 60px;
         right: 0;

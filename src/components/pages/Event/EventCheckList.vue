@@ -11,7 +11,11 @@
             </i-button>
             <div class="print-section" style="margin-top: 30px">
                 <div class="container">
-                    <h1 v-if="event !== null">{{event.eventName}} @ {{event.eventTime}}</h1>
+                    <h1 v-if="event !== null">{{event.eventName}}</h1>
+                    <div v-if="event !== null">
+                        <span>Time: {{event.eventTime}}</span>
+                        <span style="margin-left: 20px">Total:{{event.total}}</span>
+                    </div>
                     <h1 v-else>No Data!</h1>
                 </div>
                 <div class="container">
@@ -34,6 +38,7 @@
         align-items: center;
         -webkit-justify-content: center;
         justify-content: center;
+        flex-direction: column;
     }
 
     .hide {
@@ -100,6 +105,7 @@
                             if (ret.data.records.length) {
                                 self.event = ret.data.records[0].event
                                 self.event.eventTime = moment(self.event.eventTime).format('ddd MM/DD HH:mm')
+                                self.event.total = ret.data.records.length
                             }
                             self.data = ret.data.records.sort((a, b) => {
                                 return (a.student.lastName < b.student.lastName ? -1 : (a.student.lastName > b.student.lastName ? 1 : 0))
