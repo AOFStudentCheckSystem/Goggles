@@ -155,7 +155,27 @@ const actions = {
                 cause: err
             })
         })
+    },
+    eventCheckEmail (store, {eventId, address, callback}) {
+        const formData = new FormData()
+        formData.append('eventId', eventId)
+        formData.append('address', address)
+        axia.post('/event/sendmail/', formData)
+        .then((resp) => {
+            let retObj = {success: resp.data.success}
+            if (!resp.data.success) {
+                retObj.cause = resp.data.error
+            }
+            callback(retObj)
+        })
+        .catch((err) => {
+            callback({
+                success: false,
+                cause: err
+            })
+        })
     }
+
 }
 
 export default {
