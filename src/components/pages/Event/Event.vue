@@ -38,6 +38,9 @@
     .hide {
         height: 0;
     }
+    @media print {
+        #header, #footer, #nav { display: none !important; }
+    }
 </style>
 <script>
     import Spinner from '../../Spinner'
@@ -86,12 +89,14 @@
                         title: 'Actions',
                         key: 'action',
                         fixed: 'right',
-                        width: 100,
+                        width: 150,
                         render (row, column, index) {
                             return `<i-button type="text" size="small" @click="edit(${index})">
                                         <Icon type="edit" :size="16"></Icon></i-button>
                                     <i-button type="text" size="small" @click="remove(${index})">
-                                        <Icon type="trash-a" :size="16"></Icon></i-button>`
+                                        <Icon type="trash-a" :size="16"></Icon></i-button>
+                                    <i-button type="text" size="small" @click="view(${index})">
+                                        <Icon type="ios-eye" :size="16"></Icon></i-button>`
                         }
                     }
                 ]
@@ -178,6 +183,14 @@
             },
             add () {
                 this.mode = 'Add'
+            },
+            view (index) {
+                this.$router.push({
+                    name: 'EventCheckList',
+                    params: {
+                        eventId: this.events[index].eventId
+                    }
+                })
             }
         },
         mounted () {

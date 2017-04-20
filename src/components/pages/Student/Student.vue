@@ -3,7 +3,7 @@
         <resize-watcher @resize="magic" listenWindow listenDOM></resize-watcher>
         <spinner v-if="loading" :class="{'hide': loading}"></spinner>
         <div v-show="!loading">
-            <i-button type="text" size="small" @click="add"><Icon type="plus" :size="24" style="margin: 15px 30px 15px 30px; float:left"></Icon></i-button>
+            <i-button type="text" size="small" @click="add" style="margin: 15px 30px 15px 30px"><Icon type="plus" :size="24"></Icon></i-button>
             <Input v-model="searchStr" style="width: 350px; margin: 15px 30px 15px 30px; float:right" placeholder="<- Filtered by">
                 <Select v-model="searchSelected" slot="prepend" style="width: 110px">
                     <Option v-for="item in searchList" :value="item.value" :key="item">{{item.label}}</Option>

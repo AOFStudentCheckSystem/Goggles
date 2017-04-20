@@ -3,7 +3,7 @@
         <resize-watcher @resize="magic" listenWindow listenDOM></resize-watcher>
         <spinner v-if="loading" :class="{'hide': loading}"></spinner>
         <div v-show="!loading">
-            <i-button type="text" size="small" @click="add"><Icon type="plus" :size="24" style="margin: 15px 30px 15px 30px"></Icon></i-button>
+            <i-button type="text" size="small" @click="add" style="margin: 15px 30px 15px 30px"><Icon type="plus" :size="24"></Icon></i-button>
             <Table
                 :columns="columns"
                 :data="sheets"

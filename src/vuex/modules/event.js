@@ -140,6 +140,21 @@ const actions = {
                 cause: err
             })
         })
+    },
+    fetchEventCheckList (store, {eventId, callback}) {
+        axia.get('/checkin/record/' + eventId)
+        .then((resp) => {
+            callback({
+                success: true,
+                data: resp.data
+            })
+        })
+        .catch((err) => {
+            callback({
+                success: false,
+                cause: err
+            })
+        })
     }
 }
 

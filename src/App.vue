@@ -60,6 +60,22 @@
         flex-grow: 0;
         flex-shrink: 0;
     }
+    @media print {
+        body * {
+            visibility: hidden;
+        }
+
+        .print-section, .print-section * {
+            visibility: visible;
+        }
+
+        .print-section {
+            position: fixed;
+            left: 0;
+            right: 0;
+            top: 0;
+        }
+    }
 </style>
 <script>
     import Navbar from '@/components/Navbar.vue'
