@@ -9,13 +9,13 @@
         <Form-item label="Description" prop="eventDescription">
             <Input v-model="value.eventDescription" type="textarea" :autosize="{minRows: 2,maxRows: 5}"></Input>
         </Form-item>
-        <Form-item label="Status" prop="eventStatus">
-            <Radio-group v-model="value.eventStatus">
-                <Radio label="0">Scheduled</Radio>
-                <Radio label="1">Boarding</Radio>
-                <Radio label="2">Complete</Radio>
-            </Radio-group>
-        </Form-item>
+        <!--<Form-item label="Status" prop="eventStatus">-->
+            <!--<Radio-group v-model="value.eventStatus">-->
+                <!--<Radio label="0">Scheduled</Radio>-->
+                <!--<Radio label="1">Boarding</Radio>-->
+                <!--<Radio label="2">Complete</Radio>-->
+            <!--</Radio-group>-->
+        <!--</Form-item>-->
         <Form-item>
             <Button type="primary" @click="handleSubmit('formValidate')">Submit</Button>
         </Form-item>

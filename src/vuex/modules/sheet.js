@@ -35,7 +35,7 @@ const actions = {
     newSheet (store, {form, callback}) {
         const formData = new FormData()
         formData.append('name', form.name)
-        if (form.groups) {
+        if (form.groups.length > 0) {
             let i = form.groups.length - 1
             formData.append('groups', JSON.stringify(form.groups.map(g => {
                 return {
@@ -115,11 +115,10 @@ const actions = {
         if (form.name !== ref.name) {
             formData.append('newName', form.name)
         }
-        if (form.status !== ref.status) {
+        if (form.status !== Number(ref.status)) {
             formData.append('newStatus', form.status)
         }
-        if (formData.has('newName') || formData.has('newStatus')) {
-            axia.post('/signup/edit/' + id, formData)
+        axia.post('/signup/edit/' + id, formData)
             .then((resp) => {
                 callback({success: true})
             }).catch((err) => {
@@ -128,9 +127,6 @@ const actions = {
                     cause: err
                 })
             })
-        } else {
-            callback({success: true})
-        }
     },
     setEventGroupsToSheet ({state}, {id, form, callback}) {
         let formData = new FormData()
@@ -141,8 +137,7 @@ const actions = {
                 weight: i--
             }
         })))
-        if (formData.has('group')) {
-            axia.post('/signup/edit/' + id + '/set', formData)
+        axia.post('/signup/edit/' + id + '/set', formData)
             .then((resp) => {
                 let retObj = {success: resp.data.success}
                 if (!resp.data.success) {
@@ -155,9 +150,6 @@ const actions = {
                     cause: err
                 })
             })
-        } else {
-            callback({success: true})
-        }
     },
     removeSheet (store, {id, callback}) {
         axia.delete('/signup/edit/' + id)

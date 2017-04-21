@@ -69,10 +69,10 @@ const actions = {
         formData.append('firstName', form.firstName)
         formData.append('lastName', form.lastName)
         formData.append('idNumber', form.idNumber)
-        if (form.preferredName) {
+        if (form.preferredName === '') {
             formData.append('preferredName', form.preferredName)
         }
-        if (form.email) {
+        if (form.email === '') {
             formData.append('email', form.email)
         }
         axia.post('/student/create', formData)
@@ -110,17 +110,16 @@ const actions = {
         if (form.cardSecret !== ref.cardSecret) {
             formData.append('cardSecret', form.cardSecret)
         }
-        if (form.studentType !== ref.studentType) {
+        if (form.studentType !== Number(ref.studentType)) {
             formData.append('studentType', form.studentType)
         }
         if (form.dorm !== ref.dorm) {
             formData.append('dorm', form.dorm)
         }
-        if (form.grade !== ref.grade) {
+        if (form.grade !== Number(ref.grade)) {
             formData.append('grade', form.grade)
         }
-        if (formData.has('firstName') || formData.has('lastName') || formData.has('preferredName') || formData.has('email') || formData.has('cardSecret') || formData.has('studentType') || formData.has('dorm') || formData.has('grade')) {
-            axia.post('/student/edit', formData)
+        axia.post('/student/edit', formData)
             .then((resp) => {
                 let retObj = {success: resp.data.success}
                 if (!resp.data.success) {
@@ -133,9 +132,6 @@ const actions = {
                     cause: err
                 })
             })
-        } else {
-            callback({success: true})
-        }
     },
     removeStudent (store, {id, callback}) {
         axia.delete('/student/remove/' + id)

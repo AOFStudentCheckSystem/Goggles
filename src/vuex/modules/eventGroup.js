@@ -51,7 +51,7 @@ const actions = {
     newEventGroup (store, {form, callback}) {
         const formData = new FormData()
         formData.append('name', form.name)
-        if (form.groupItems) {
+        if (form.groupItems.length > 0) {
             formData.append('groupItems', JSON.stringify(form.groupItems))
         }
         axia.post('/event/group/new', formData)
@@ -140,8 +140,7 @@ const actions = {
         if (form.name !== ref.name) {
             formData.append('newName', form.name)
         }
-        if (formData.has('newName')) {
-            axia.post('/event/group/edit/' + form.id, formData)
+        axia.post('/event/group/edit/' + form.id, formData)
             .then((resp) => {
                 let retObj = {success: resp.data.success}
                 if (!resp.data.success) {
@@ -154,9 +153,6 @@ const actions = {
                     cause: err
                 })
             })
-        } else {
-            callback({success: true})
-        }
     },
     fetchAvailableEventGroups (store, {callback}) {
         axia.get('/event/group/list-available')

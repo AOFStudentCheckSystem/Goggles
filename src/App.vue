@@ -173,6 +173,12 @@
         created () {
             const self = this
             this.init()
+//            axia.interceptors.request.use((request) => {
+//                console.log(request)
+//                return request
+//            }, (error) => {
+//                return Promise.reject(error)
+//            })
             axia.interceptors.response.use((response) => {
                 return response
             }, (error) => {
