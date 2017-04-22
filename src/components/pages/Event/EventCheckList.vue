@@ -25,9 +25,9 @@
             </Tooltip>
             <div class="print-section" style="margin-top: 30px">
                 <div class="container">
-                    <h1 v-if="event !== null">{{event.eventName}}</h1>
-                    <div v-if="event !== null">
-                        <span>Time: {{event.eventTime}}</span>
+                    <h1 v-if="event !== undefined">{{event.eventName}}</h1>
+                    <div v-if="event !== undefined">
+                        <span>Time: {{eventTime}}</span>
                         <span style="margin-left: 20px">Total:{{data.length}}</span>
                     </div>
                     <h1 v-else>No Data!</h1>
@@ -128,7 +128,6 @@
                     }
                 ],
                 data: [],
-                event: null,
                 showModal: false,
                 form: {
                     formValidate: {
@@ -136,21 +135,18 @@
                     },
                     ruleValidate: {},
                     appendix: '@avonoldfarms.com'
-                }
+                },
+                event: undefined
             }
         },
         methods: {
             updateList () {
+                console.log('called')
                 const self = this
-                this.loading = true
                 this.$store.dispatch('fetchEventCheckList', {
-                    eventId: this.$route.params.eventId,
+                    eventId: this.$route.params['eventId'],
                     callback (ret) {
                         if (ret.success) {
-                            if (ret.data.records.length) {
-                                self.event = ret.data.records[0].event
-                                self.event.eventTime = moment(self.event.eventTime).format('ddd MM/DD HH:mm')
-                            }
                             self.data = ret.data.records.filter(r => {
                                 return r.checkInTime >= 0
                             }).sort((a, b) => {
@@ -222,7 +218,25 @@
             }
         },
         mounted () {
-            this.updateList()
+            const self = this
+            if (this.$store.state.event.events.length === 0) {
+                this.$nextTick(() => {
+                    self.$router.push({
+                        name: 'Event'
+                    })
+                })
+            } else {
+                this.loading = true
+                this.event = this.$store.state.event.events.filter(ev => {
+                    return ev.eventId === self.$route.params['eventId']
+                })[0]
+                this.updateList()
+            }
+        },
+        computed: {
+            eventTime () {
+                return moment(this.event.eventTime).format('ddd MM/DD HH:mm')
+            }
         }
     }
 </script>

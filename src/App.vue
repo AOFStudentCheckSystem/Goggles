@@ -69,7 +69,7 @@
             visibility: visible !important;
         }
         .print-section {
-            margin-top: -50px !important;
+            margin-top: -60px !important;
         }
         .no-print {
             display: none !important;
