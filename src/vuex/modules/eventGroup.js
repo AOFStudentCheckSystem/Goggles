@@ -134,12 +134,7 @@ const actions = {
     },
     editEventGroup ({state}, {form, callback}) {
         let formData = new FormData()
-        const ref = state.eventGroups.filter(eg => {
-            return eg.id === form.id
-        })[0]
-        if (form.name !== ref.name) {
-            formData.append('newName', form.name)
-        }
+        formData.append('newName', form.name)
         axia.post('/event/group/edit/' + form.id, formData)
             .then((resp) => {
                 let retObj = {success: resp.data.success}

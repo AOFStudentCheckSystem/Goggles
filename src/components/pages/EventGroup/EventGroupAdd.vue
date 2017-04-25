@@ -8,7 +8,7 @@
         <Form-item label="Events" prop="groupItems">
             <Transfer
                 :data="events"
-                :target-keys="formValidate.groups"
+                :target-keys="formValidate.groupItems"
                 filterable
                 :filter-method="filterMethod"
                 :titles="['Available', 'Selected']"
@@ -36,7 +36,7 @@
             return {
                 formValidate: {
                     name: '',
-                    groups: []
+                    groupItems: []
                 },
                 ruleValidate: {
                     name: [
@@ -82,7 +82,7 @@
                 return item.eventName
             },
             onChange (newTargetKeys) {
-                this.formValidate.groups = newTargetKeys
+                this.formValidate.groupItems = newTargetKeys
             }
         },
         mounted () {
