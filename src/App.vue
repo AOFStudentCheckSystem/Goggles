@@ -156,7 +156,7 @@
             init () {
                 const auth = localStorage.getItem('Authorization')
                 if (auth) {
-                    console.log(auth)
+//                    console.log(auth)
                     axia.defaults.headers.common['Authorization'] = auth
                     const self = this
                     this.$store.dispatch('verifyToken', {

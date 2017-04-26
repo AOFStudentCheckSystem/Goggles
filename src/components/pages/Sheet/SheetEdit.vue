@@ -142,7 +142,7 @@
         },
         mounted () {
             this.formValidate.name = this.value.name
-            this.formValidate.groups = this.value.events.sort((a, b) => {
+            this.formValidate.groups = this.value.entries.sort((a, b) => {
                 return b.weight - a.weight
             }).map(event => {
                 return event.eventGroup
