@@ -1,7 +1,6 @@
 <template>
-    <div>
-        <spinner v-if="loading"></spinner>
-        <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="64" v-else>
+    <spinner v-if="loading" :class="{'no-height': loading}" :pad="false"></spinner>
+    <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="64" v-else>
         <Form-item label="Name" prop="name">
             <Input v-model="formValidate.name"></Input>
         </Form-item>
@@ -16,11 +15,12 @@
                 @on-change="onChange"></Transfer>
         </Form-item>
         <Form-item>
-            <Button type="primary" @click="handleSubmit('formValidate')" :disabled="loading">{{loading?'Please wait':'Submit'}}</Button>
+            <Button type="primary" @click="handleSubmit('formValidate')" :disabled="loading">
+                {{loading ? 'Please wait' : 'Submit'}}
+            </Button>
             <Button type="ghost" @click="handleReset('formValidate')" style="margin-left: 8px">Reset</Button>
         </Form-item>
     </Form>
-    </div>
 </template>
 
 <style scoped>
@@ -55,6 +55,7 @@
                 this.$refs[name].validate((valid) => {
                     if (valid) {
                         const self = this
+                        this.loading = true
                         this.$store.dispatch('newEventGroup', {
                             form: this.formValidate,
                             callback (ret) {
@@ -64,6 +65,7 @@
                                     self.$Message.error('An error has occurred!')
                                     console.error(ret.cause)
                                 }
+                                self.loading = false
                                 EventBus.$emit('form-submit', 1)
                             }
                         })
@@ -99,7 +101,8 @@
                     } else {
                         self.$Message.error('An error has occurred')
                     }
-                }})
+                }
+            })
         }
     }
 </script>

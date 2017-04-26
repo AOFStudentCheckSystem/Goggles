@@ -94,7 +94,7 @@ const actions = {
         // if (form.eventStatus !== Number(ref.eventStatus)) {
         //     formData.append('newStatus', form.eventStatus)
         // }
-        console.log(formData)
+        // console.log(formData)
         axia.post('/event/edit', formData)
             .then((resp) => {
                 let retObj = {success: resp.data.success}

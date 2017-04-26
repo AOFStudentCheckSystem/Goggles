@@ -1,31 +1,29 @@
 <template>
-    <div>
-        <spinner v-if="loading"></spinner>
-        <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="64" v-else>
-            <Form-item label="Name" prop="name">
-                <Input v-model="formValidate.name"></Input>
-            </Form-item>
-            <p style="margin-left: 5em">
-                <Icon type="information-circled"></Icon>
-                Changes on events will take effect immediately.
-            </p>
-            <Form-item label="Events" prop="groupItems">
-                <Transfer
-                    :data="events"
-                    :target-keys="groupItems"
-                    filterable
-                    :filter-method="filterMethod"
-                    :titles="['Available', 'Selected']"
-                    :render-format="render"
-                    @on-change="onChange"></Transfer>
-            </Form-item>
-            <Form-item>
-                <Button type="primary" @click="handleSubmit('formValidate')" :disabled="loading">
-                    {{loading ? 'Please wait' : 'Submit'}}
-                </Button>
-            </Form-item>
-        </Form>
-    </div>
+    <spinner v-if="loading" :class="{'no-height': loading}" :pad="false"></spinner>
+    <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="64" v-else>
+        <Form-item label="Name" prop="name">
+            <Input v-model="formValidate.name"></Input>
+        </Form-item>
+        <p style="margin-left: 5em">
+            <Icon type="information-circled"></Icon>
+            Changes on events will take effect immediately.
+        </p>
+        <Form-item label="Events" prop="groupItems">
+            <Transfer
+                :data="events"
+                :target-keys="groupItems"
+                filterable
+                :filter-method="filterMethod"
+                :titles="['Available', 'Selected']"
+                :render-format="render"
+                @on-change="onChange"></Transfer>
+        </Form-item>
+        <Form-item>
+            <Button type="primary" @click="handleSubmit('formValidate')" :disabled="loading">
+                {{loading ? 'Please wait' : 'Submit'}}
+            </Button>
+        </Form-item>
+    </Form>
 </template>
 
 <style scoped>
@@ -62,6 +60,7 @@
                 this.$refs[name].validate((valid) => {
                     if (valid) {
                         const self = this
+                        this.loading = true
                         this.$store.dispatch('editEventGroup', {
                             form: this.formValidate,
                             callback (ret) {
@@ -71,6 +70,7 @@
                                     self.$Message.error('An error has occurred!')
                                     console.error(ret.cause)
                                 }
+                                self.loading = false
                                 EventBus.$emit('form-submit', 1)
                             }
                         })
@@ -93,6 +93,7 @@
                     this.$Message.warning('Please select only one event!')
                 } else {
                     const self = this
+                    this.loading = true
                     this.$store.dispatch(direction === 'left' ? 'removeEventFromEventGroup' : 'addEventToEventGroup', {
                         eventId: moveKeys[0],
                         eventGroupId: this.value.id,
@@ -103,6 +104,7 @@
                             } else {
                                 self.$Message.error('An error has occurred')
                             }
+                            self.loading = false
                         }
                     })
                 }

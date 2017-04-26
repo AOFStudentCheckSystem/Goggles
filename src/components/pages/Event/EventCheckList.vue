@@ -143,6 +143,7 @@
             updateList () {
                 console.log('called')
                 const self = this
+                this.loading = true
                 this.$store.dispatch('fetchEventCheckList', {
                     eventId: this.$route.params['eventId'],
                     callback (ret) {
@@ -165,6 +166,7 @@
                         } else {
                             self.$Message.error('An error has occurred, try reload this page.')
                         }
+                        self.loading = false
                     }
                 })
             },

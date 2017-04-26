@@ -1,6 +1,6 @@
 <template>
     <Spin :fix="fix">
-        <Icon type="load-c" size=36 class="spin-icon-load" :class="{'cent': !fix}"></Icon>
+        <Icon type="load-c" size=36 class="spin-icon-load" :class="{'cent': !fix && pad}"></Icon>
         <div>Loading</div>
     </Spin>
 </template>
@@ -26,6 +26,10 @@
             fix: {
                 type: Boolean,
                 default: false
+            },
+            pad: {
+                type: Boolean,
+                default: true
             }
         }
     }

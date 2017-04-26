@@ -1,6 +1,6 @@
 <template>
     <div>
-        <spinner v-if="loading"></spinner>
+        <spinner v-if="loading" :class="{'no-height': loading}" :pad="false"></spinner>
         <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="64" v-else>
             <Form-item label="Name" prop="name">
                 <Input v-model="formValidate.name"></Input>
@@ -87,6 +87,7 @@
                 this.$refs[name].validate((valid) => {
                     if (valid) {
                         const self = this
+                        this.loading = true
                         this.$store.dispatch('editSheet', {
                             id: self.value.id,
                             form: this.formValidate,
@@ -103,6 +104,7 @@
                                                 self.$Message.error('An error has occurred!')
                                                 console.error(ret2.cause)
                                             }
+                                            self.loading = false
                                         }
                                     })
                                 } else {

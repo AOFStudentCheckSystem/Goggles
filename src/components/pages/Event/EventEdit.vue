@@ -1,5 +1,6 @@
 <template>
-    <Form ref="formValidate" :model="value" :rules="ruleValidate" :label-width="64">
+    <spinner v-if="loading" :class="{'no-height': loading}" :pad="false"></spinner>
+    <Form v-else ref="formValidate" :model="value" :rules="ruleValidate" :label-width="64">
         <Form-item label="Name" prop="eventName">
             <Input v-model="value.eventName"></Input>
         </Form-item>
@@ -28,6 +29,7 @@
 
 <script>
     import {EventBus} from '../../../main'
+    import Spinner from '@/components/Spinner'
     export default {
         name: 'EventEdit',
         data () {
@@ -36,7 +38,8 @@
                     eventName: [
                         {required: true, message: 'Please name the event', trigger: 'blur'}
                     ]
-                }
+                },
+                loading: false
             }
         },
         methods: {
@@ -44,6 +47,7 @@
                 this.$refs[name].validate((valid) => {
                     if (valid) {
                         const self = this
+                        this.loading = true
                         this.$store.dispatch('editEvent', {
                             form: this.value,
                             callback (ret) {
@@ -53,6 +57,7 @@
                                     self.$Message.error('An error has occurred!')
                                     console.error(ret.cause)
                                 }
+                                self.loading = false
                                 EventBus.$emit('form-submit', 0)
                             }
                         })
@@ -78,6 +83,9 @@
                 },
                 deep: true
             }
+        },
+        components: {
+            Spinner
         }
     }
 </script>

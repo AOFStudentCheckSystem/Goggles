@@ -1,33 +1,31 @@
 <template>
-    <div>
-        <spinner v-if="loading"></spinner>
-        <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="64" v-else>
-            <Form-item label="Name" prop="name">
-                <Input v-model="formValidate.name"></Input>
-            </Form-item>
-            <Form-item label="Event Groups" prop="groups">
-                <h3>Available Groups</h3>
-                <Select v-model="selectedGroupsToAdd" filterable multiple style="width:260px" placeholder="supports select multiple and search">
-                    <Option v-for="item in availableGroups" :value="item.id" :key="item">{{ item.name }}</Option>
-                </Select>
-                <i-button type="text" size="small" @click="addGroups">
-                    <Icon type="plus" :size="20"></Icon></i-button>
-                <h3>Selected Groups</h3>
-                <p>Order here will show up on actual sheet</p>
-                <draggable v-model="formValidate.groups" class="draggable">
-                    <div v-for="group in formValidate.groups" class="draggable-div">
+    <spinner v-if="loading" :class="{'no-height': loading}" :pad="false"></spinner>
+    <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="64" v-else>
+        <Form-item label="Name" prop="name">
+            <Input v-model="formValidate.name"></Input>
+        </Form-item>
+        <Form-item label="Event Groups" prop="groups">
+            <h3>Available Groups</h3>
+            <Select v-model="selectedGroupsToAdd" filterable multiple style="width:260px" placeholder="supports select multiple and search">
+                <Option v-for="item in availableGroups" :value="item.id" :key="item">{{ item.name }}</Option>
+            </Select>
+            <i-button type="text" size="small" @click="addGroups">
+                <Icon type="plus" :size="20"></Icon></i-button>
+            <h3>Selected Groups</h3>
+            <p>Order here will show up on actual sheet</p>
+            <draggable v-model="formValidate.groups" class="draggable">
+                <div v-for="group in formValidate.groups" class="draggable-div">
                         <span class="draggable-span">{{group.name}}
                         <i-button type="text" size="small" @click="removeGroup(group.id)">
                             <Icon type="trash-a" :size="16"></Icon></i-button></span>
-                    </div>
-                </draggable>
-            </Form-item>
-            <Form-item>
-                <Button type="primary" @click="handleSubmit('formValidate')" :disabled="loading">{{loading?'Please wait':'Submit'}}</Button>
-                <Button type="ghost" @click="handleReset('formValidate')" style="margin-left: 8px">Reset</Button>
-            </Form-item>
-        </Form>
-    </div>
+                </div>
+            </draggable>
+        </Form-item>
+        <Form-item>
+            <Button type="primary" @click="handleSubmit('formValidate')" :disabled="loading">{{loading?'Please wait':'Submit'}}</Button>
+            <Button type="ghost" @click="handleReset('formValidate')" style="margin-left: 8px">Reset</Button>
+        </Form-item>
+    </Form>
 </template>
 
 <style scoped>
@@ -80,6 +78,7 @@
                 this.$refs[name].validate((valid) => {
                     if (valid) {
                         const self = this
+                        this.loading = true
                         this.$store.dispatch('newSheet', {
                             form: this.formValidate,
                             callback (ret) {
@@ -89,6 +88,7 @@
                                     self.$Message.error('An error has occurred!')
                                     console.error(ret.cause)
                                 }
+                                self.loading = false
                                 EventBus.$emit('form-submit', 2)
                             }
                         })
