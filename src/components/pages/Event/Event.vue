@@ -3,7 +3,9 @@
         <resize-watcher @resize="magic" listenWindow listenDOM></resize-watcher>
         <spinner v-if="loading" :class="{'hide': loading}"></spinner>
         <div v-show="!loading">
-            <i-button type="text" size="small" @click="add"><Icon type="plus" :size="24" style="margin: 15px 30px 15px 30px"></Icon></i-button>
+            <i-button type="text" size="small" @click="add">
+                <Icon type="plus" :size="24" style="margin: 15px 30px 15px 30px"></Icon>
+            </i-button>
             <Table
                 :columns="columns"
                 :data="events"
@@ -31,18 +33,21 @@
 <style scoped>
     .container {
         display: -webkit-flex;
-        display:         flex;
+        display: flex;
         -webkit-align-items: center;
         align-items: center;
         -webkit-justify-content: center;
         justify-content: center;
     }
+
     .text-center {
-        text-align:center
+        text-align: center
     }
+
     .hide {
         height: 0;
     }
+
     .button {
         margin-bottom: 10px;
     }
@@ -94,14 +99,21 @@
                         title: 'Actions',
                         key: 'action',
                         fixed: 'right',
-                        width: 150,
+                        width: 170,
                         render (row, column, index) {
-                            return `<i-button type="text" size="small" @click="edit(${index})">
+                            return `
+                                    <i-button type="text" size="small" @click="edit(${index})">
                                         <Icon type="edit" :size="16"></Icon></i-button>
                                     <i-button type="text" size="small" @click="fakeDelete(${index})">
                                         <Icon type="trash-a" :size="16"></Icon></i-button>
-                                    <i-button type="text" size="small" @click="view(${index})">
-                                        <Icon type="ios-eye" :size="16"></Icon></i-button>`
+                                <Tooltip content="Check-in" placement="left">
+                                    <i-button type="text" size="small" @click="viewCheckin(${index})">
+                                        <Icon type="ios-eye" :size="16"></Icon></i-button>
+                                </Tooltip>
+                                <Tooltip content="Sign-up" placement="left">
+                                    <i-button type="text" size="small" @click="viewSignup(${index})">
+                                        <Icon type="ios-list" :size="16"></Icon></i-button>
+                                </Tooltip>`
                         }
                     }
                 ]
@@ -124,13 +136,17 @@
                     let newEvent = copy(event)
                     newEvent.eventTime = moment(newEvent.eventTime).format('YYYY-MM-DD ddd HH:mm')
                     switch (newEvent.eventStatus) {
-                        case 0: newEvent.eventStatus = 'Scheduled'
+                        case 0:
+                            newEvent.eventStatus = 'Scheduled'
                             break
-                        case 1: newEvent.eventStatus = 'Boarding'
+                        case 1:
+                            newEvent.eventStatus = 'Boarding'
                             break
-                        case 2: newEvent.eventStatus = 'Complete'
+                        case 2:
+                            newEvent.eventStatus = 'Complete'
                             break
-                        default: newEvent.eventStatus = 'Unknown'
+                        default:
+                            newEvent.eventStatus = 'Unknown'
                     }
                     return newEvent
                 })
@@ -193,9 +209,17 @@
             add () {
                 this.mode = 'Add'
             },
-            view (index) {
+            viewCheckin (index) {
                 this.$router.push({
                     name: 'EventCheckList',
+                    params: {
+                        eventId: this.events[index].eventId
+                    }
+                })
+            },
+            viewSignup (index) {
+                this.$router.push({
+                    name: 'EventSignList',
                     params: {
                         eventId: this.events[index].eventId
                     }

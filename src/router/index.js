@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import Dashboard from '@/components/pages/Dashboard/Dashboard.vue'
 import Event from '@/components/pages/Event/Event.vue'
 import EventCheckList from '@/components/pages/Event/EventCheckList.vue'
+import EventSignList from '@/components/pages/Event/EventSignList.vue'
 import EventGroup from '@/components/pages/EventGroup/EventGroup.vue'
 import Sheet from '@/components/pages/Sheet/Sheet.vue'
 import Student from '@/components/pages/Student/Student.vue'
@@ -30,6 +31,11 @@ export default new Router({
             path: '/eventchecklist/:eventId',
             name: 'EventCheckList',
             component: EventCheckList
+        },
+        {
+            path: '/eventsignlist/:eventId',
+            name: 'EventSignList',
+            component: EventSignList
         },
         {
             path: '/event',
